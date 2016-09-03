@@ -18,9 +18,8 @@ describe('rest', () => {
 
         expect(actual).to.equal(expected);
       });
-    });
 
-      it('derives a proxy url with query parameters', 
+      it('derives a proxy url with query parameters', () => {
         let client = new rest.Client({
           proxy: {scheme: 'https', host: 'api.local:3000', path: '/api'},
         });
