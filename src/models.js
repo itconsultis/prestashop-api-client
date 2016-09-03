@@ -1,9 +1,8 @@
 import path from 'path';
 import lang from './lang';
-import React from 'react';
-import xml2js from 'xml2js';
 import { LocalCache as LocalStorageCache } from 'localcache';
-import { querystring, XML } from './support';
+import querystring from './querystring';
+import xml from './xml';
 import rest from './rest';
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}

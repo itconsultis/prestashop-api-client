@@ -1,7 +1,8 @@
 import path from 'path';
 import lang from './lang';
 import { LocalCache as LocalStorageCache } from 'localcache';
-import { querystring, xml } from './support';
+import querystring from './querystring';
+import xml from './xml';
 
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}
@@ -231,20 +232,6 @@ resources.Products = class extends resources.Resource {
     };
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  createModels (payload) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  createModel (payload) {
-
-  }
-
 }
 
 resources.Images = class extends resources.Resource {
@@ -257,20 +244,6 @@ resources.Images = class extends resources.Resource {
       ...super.defaults(),
       path: '/images',
     };
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  createModels (payload) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  createModel (payload) {
-
   }
 
 }
