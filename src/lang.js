@@ -1,3 +1,7 @@
+const lang = {};
+
+export default lang;
+
 /**
  * This works like PHP's empty() function. Behaviors:
  *  - return true if value is falsy
@@ -8,7 +12,7 @@
  * @param mixed value
  * @return {Boolean}
  */
-export const empty = (value) => {
+export const empty = lang.empty = (value) => {
   if (value === undefined) {
     return true;
   }

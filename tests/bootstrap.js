@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 global.expect = expect;
+global.sinon = sinon;
 
 /**
  * @param {String} abspath

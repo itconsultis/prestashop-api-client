@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "ln -s node_modules/.bin/mocha; ln -s node_modules/.bin/nodemon; ln -s node_modules/.bin/eslint",
+    "postinstall": "bin=node_modules/.bin; ln -s $bin/nodemon; ln -s $bin/eslint; ln -s $bin/mocha; ln -s $bin/istanbul",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
     "start": "nodemon -x 'npm test'"
   },
@@ -18,6 +18,7 @@
     "babel-register": "^6.14.0",
     "chai": "^3.5.0",
     "eslint": "^3.4.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
     "sinon": "^1.17.5"

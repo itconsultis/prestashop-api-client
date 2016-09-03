@@ -1,9 +1,7 @@
-import _ from 'lodash';
 import path from 'path';
 import lang from './lang';
-import xml2js from 'xml2js';
 import { LocalCache as LocalStorageCache } from 'localcache';
-import { querystring, XML } from './support';
+import { querystring, xml } from './support';
 
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}
@@ -29,14 +27,23 @@ export const Client = class {
    * @return {Object}
    */
   defaults () {
+    let location = global.location || {
+      protocol: 'https:',
+      host: 'localhost',
+    };
+
+    let fetch = global.fetch || (() => {
+      return P.reject(new Error('fetch is not a global symbol'));
+    });
+
     return {
       // prestashop language id
       language: 'en',
 
       // API proxy configuration
       proxy: {
-        scheme: window.location.protocol.slice(0, -1),
-        host: window.location.host,
+        scheme: location.protocol.slice(0, -1),
+        host: location.host,
         path: '/shop/api',
       },
 
@@ -44,6 +51,7 @@ export const Client = class {
       fetch: {
         // the fetch function; mainly to make unit testing easier
         algo: fetch,
+
         // Request options
         defaults: {
           // https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
@@ -158,7 +166,7 @@ resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => XML.parse(response.text()))
+    .then((response) => xml.parse(response.text()))
     .then((objects) => this.createModels(payload))
   }
 
@@ -266,3 +274,5 @@ resources.Images = class extends resources.Resource {
   }
 
 }
+
+export default { Client, resources };
