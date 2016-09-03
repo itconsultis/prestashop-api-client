@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "postinstall": "bin=node_modules/.bin; ln -s $bin/nodemon; ln -s $bin/eslint; ln -s $bin/mocha; ln -s $bin/istanbul",
+    "postinstall": ".npm/scripts/postinstall",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
     "start": "nodemon -x 'npm test'"
   },
