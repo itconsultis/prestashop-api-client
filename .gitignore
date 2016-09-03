@@ -1,6 +1,7 @@
 /node_modules
 /mocha
 /nodemon
+/eslint
 
 *.swp
 *.swo

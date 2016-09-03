@@ -1,7 +1,7 @@
 import { empty } from '../../src/lang';
 import assert from 'assert';
 
-describe('utils.lang', () => {
+describe('lang', () => {
 
   describe('.empty()', () => {
 

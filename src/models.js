@@ -69,11 +69,11 @@ export const Product = class extends models.Model {
    * @inheritdoc
    */
   resources () {
-    {
+    return {
       images: rest.resources.Images({
         root: `/images/products/${this.attr('id')}`,
       }),
-    },
+    };
   }
 
 }

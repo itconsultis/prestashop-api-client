@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import path from 'path';
 import lang from './lang';
-import React from 'react';
 import xml2js from 'xml2js';
 import { LocalCache as LocalStorageCache } from 'localcache';
 import { querystring, XML } from './support';
@@ -36,7 +35,7 @@ export const Client = class {
 
       // API proxy configuration
       proxy: {
-        scheme: 'http',
+        scheme: window.location.protocol.slice(0, -1),
         host: window.location.host,
         path: '/shop/api',
       },
@@ -62,10 +61,6 @@ export const Client = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
-
-    this.languages = new rest.LanguagesResource();
-    this.products = new rest.ProductsResource();
-    this.images = new rest.ImagesResource();
   }
 
   /**
@@ -127,6 +122,7 @@ export const Client = class {
 
 }
 
+////////////////////////////////////////////////////////////////////////////////
 export const resources = {};
 
 /**
@@ -161,9 +157,9 @@ resources.Resource = class {
    * @return {Array}
    */
   list () {
-    return this.client.get(this.options.root),
-    .then((response) => XML.parse(response.text())
-    .then((objects) => this.createModels(payload));
+    return this.client.get(this.options.root)
+    .then((response) => XML.parse(response.text()))
+    .then((objects) => this.createModels(payload))
   }
 
   /**
@@ -201,25 +197,30 @@ resources.Resource = class {
 
 }
 
-resources.Languages = class extends rest.Resource {
-
-  defaults () {
-    return {...super.defaults(), {
-      path: '/languages',  
-    }};
-  }
-
-}
-
-resources.Products = class extends rest.Resource {
+resources.Languages = class extends resources.Resource {
 
   /**
    * @inheritdoc
    */
   defaults () {
-    return {...super.defaults(), {
+    return {
+      ...super.defaults(),
+      path: '/languages',  
+    };
+  }
+
+}
+
+resources.Products = class extends resources.Resource {
+
+  /**
+   * @inheritdoc
+   */
+  defaults () {
+    return {
+      ...super.defaults(),
       path: '/products',
-    }};
+    };
   }
 
   /**
@@ -238,15 +239,16 @@ resources.Products = class extends rest.Resource {
 
 }
 
-resources.Images = class extends rest.Resource {
+resources.Images = class extends resources.Resource {
 
   /**
    * @inheritdoc
    */
   defaults () {
-    return {...super.defaults(), {
+    return {
+      ...super.defaults(),
       path: '/images',
-    }};
+    };
   }
 
   /**
