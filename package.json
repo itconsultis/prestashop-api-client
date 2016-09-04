@@ -2,7 +2,7 @@
   "name": "prestashop-api-client",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit --slow 100",
