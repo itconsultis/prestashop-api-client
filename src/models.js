@@ -152,5 +152,6 @@ export const Image = models.Image = class extends models.Model {
       url: '',
     };
   }
+
 }
 
