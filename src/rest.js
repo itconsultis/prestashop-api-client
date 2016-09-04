@@ -4,7 +4,6 @@ import { each } from 'lodash/each';
 import { map } from 'lodash/map';
 import querystring from './querystring';
 import libxml from './xml';
-import xpath from 'xpath';
 import models from './models';
 
 const P = Promise;
