@@ -21,7 +21,6 @@ describe('rest.resources.Products', () => {
       resource.get(8)
 
       .then((model) => {
-        console.log(model);
         expect(client.get.calledOnce).to.be.ok;
         expect(response.text.calledOnce).to.be.ok;
         expect(model).to.be.an.instanceof(Product);
