@@ -138,7 +138,7 @@ export const resources = {};
 /**
  * a REST resource
  */
-resources.Resource = class {
+export const Resource = resources.Resource = class {
 
   /**
    * Return instance configuration defaults
@@ -237,7 +237,7 @@ resources.Resource = class {
   }
 }
 
-resources.Languages = class extends resources.Resource {
+resources.Languages = class extends Resource {
 
   /**
    * @inheritdoc
@@ -251,7 +251,7 @@ resources.Languages = class extends resources.Resource {
 
 }
 
-resources.Products = class extends resources.Resource {
+resources.Products = class extends Resource {
 
   /**
    * @inheritdoc
@@ -278,7 +278,7 @@ resources.Products = class extends resources.Resource {
 
 }
 
-resources.Images = class extends resources.Resource {
+resources.Images = class extends Resource {
 
   /**
    * @inheritdoc
