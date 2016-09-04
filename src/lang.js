@@ -50,3 +50,10 @@ export const empty = lang.empty = (value) => {
   return false;
 };
 
+export const coerce = lang.coerce = {};
+
+coerce.integer = (v) => parseInt(v, 10);
+coerce.string = String;
+coerce.bool = (v) => !empty(coerce.integer(v));
+coerce.number = Number;
+

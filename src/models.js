@@ -1,15 +1,24 @@
 import path from 'path';
 import lang from './lang';
-import { LocalCache as LocalStorageCache } from 'localcache';
 import querystring from './querystring';
 import xml from './xml';
 import rest from './rest';
+
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}
+const { bool, integer, number, string } = lang.coerce;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-export const Model = class {
+const models = {};
+
+export default models;
+
+export const Model = models.Model = class {
+
+  static mappings () {
+    throw new NotImplemented();
+  }
 
   /**
    * Return default model attributes
@@ -21,8 +30,6 @@ export const Model = class {
   }
 
   /**
-   * Return a dictionary containing rest.Resource instances that "belong" to
-   * the model.
    * @param void
    * @return {Object}
    */
@@ -35,7 +42,6 @@ export const Model = class {
    */
   constructor (attrs={}) {
     this.attrs = {...this.defaults(), ...attrs};
-    Object.assign(this, ...this.resources());
   }
 
   /** 
@@ -56,20 +62,34 @@ export const Model = class {
 
     return attrs[name];
   }
+
+  related (resource_name) {
+    return this.resources()[resource_name];
+  }
+
 }
 
-export const Language = class extends models.Model {
+export const Language = models.Language = class extends models.Model {
   // implement me
 }
 
-export const Product = class extends models.Model {
+export const Product = models.Product = class extends models.Model {
+
+  static mappings () {
+    return {
+      /** 
+       * attribute-name: [setter] || [setter, getter]
+       */
+      'id': [integer],
+    };
+  }
 
   /**
    * @inheritdoc
    */
   resources () {
     return {
-      images: rest.resources.Images({
+      images: new rest.resources.Images({
         root: `/images/products/${this.attr('id')}`,
       }),
     };
@@ -77,7 +97,7 @@ export const Product = class extends models.Model {
 
 }
 
-export const Image = class extends models.Model {
+export const Image = models.Image = class extends models.Model {
 
   /**
    * @inheritdoc

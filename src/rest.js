@@ -1,8 +1,10 @@
 import path from 'path';
 import lang from './lang';
-import { LocalCache as LocalStorageCache } from 'localcache';
+import { each } from 'lodash';
 import querystring from './querystring';
 import xml from './xml';
+import xpath from 'xpath';
+import models from './models';
 
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}
@@ -38,26 +40,23 @@ export const Client = class {
     });
 
     return {
-      // prestashop language id
+      // ISO language code
       language: 'en',
 
       // API proxy configuration
       proxy: {
         scheme: location.protocol.slice(0, -1),
         host: location.host,
-        path: '/shop/api',
+        root: '/shop/api',
       },
 
       // Fetch-related options
       fetch: {
-        // the fetch function; mainly to make unit testing easier
+        // the fetch function
         algo: fetch,
-
-        // Request options
+        // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
         defaults: {
-          // https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
           cache: 'default',
-          // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
           mode: 'same-origin',
         },
       },
@@ -101,7 +100,7 @@ export const Client = class {
    */
   url (uri, query={}) {
     let proxy = this.options.proxy;
-    let fullpath = path.join(proxy.path, uri);
+    let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
       fullpath += '?' + querystring.stringify(query);
@@ -146,8 +145,9 @@ resources.Resource = class {
    */
   defaults () {
     return {
-      client: rest.Client.instance(),
+      client: Client.instance(),
       root: '/',
+      model: models.Model,
     };
   }
 
@@ -167,8 +167,8 @@ resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => xml.parse(response.text()))
-    .then((objects) => this.createModels(payload))
+    .then((response) => xml.dom(response.text()))
+    .then((dom) => this.createModels(dom))
   }
 
   /**
@@ -179,29 +179,41 @@ resources.Resource = class {
    */
   get (id) {
     return this.client.get(`${this.options.root}/${id}`)
-    .then((object) => this.createModel(object));
+    .then((response) => xml.dom(response.text()))
+    .then((xml) => this.parseModelAttributes(xml))
+    .then((attrs) => this.createModel(attrs))
+  }
+
+  /**
+   * Given the API response payload for a single domain object, return a plain
+   * object that contains model attributes.
+   * @param {xmldom.Document} dom
+   * @return {Object}
+   */
+  parseModelAttributes (dom) {
+    throw new NotImplemented();
   }
 
   /**
    * Given an API response payload that contains a collection of domain
    * objects, map the collection to an Array containing Model instances.
    * @async Promise
-   * @param {Array} objects
+   * @param {xmldom.Document} dom
    * @return {Array}
    */
-  createModels (payload) {
+  createModels (dom) {
     throw new NotImplemented();
   }
 
   /**
-   * Given an API response payload that contains a single domain object,
-   * return a Model instance.
+   * Given an object containing model attributes, return a Model instance.
    * @async Promise
-   * @param {Object} payload
+   * @param {Object} attrs
    * @return {Model}
    */
-  createModel (payload) {
-    throw new NotImplemented();
+  createModel (attrs) {
+    let constructor = this.options.model;
+    return new constructor(attrs);
   }
 
 }
@@ -214,7 +226,7 @@ resources.Languages = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/languages',  
+      root: '/languages',  
     };
   }
 
@@ -228,10 +240,32 @@ resources.Products = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/products',
+      root: '/products',
+      model: models.Product,
     };
   }
 
+  resources () {
+    return {
+      images: new rest.resources.Images({
+        root: `/images/products/${this.attr('id')}`,
+      }),
+    };
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  parseModelAttributes (xmlstr) {
+    return xml.parse(xmlstr)
+    .then((obj) => {
+      obj = obj.prestashop.product[0];
+
+      return {
+        id: obj.id[0].trim(),
+      }
+    });
+  }
 }
 
 resources.Images = class extends resources.Resource {
@@ -242,7 +276,7 @@ resources.Images = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/images',
+      root: '/images',
     };
   }
 
