@@ -17,6 +17,7 @@
   "devDependencies": {
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
+    "babel-loader": "^6.2.5",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
     "babel-register": "^6.14.0",
@@ -26,6 +27,7 @@
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
     "sinon": "^1.17.5",
+    "webpack": "^1.13.2",
     "xmldom": "^0.1.22"
   }
 }

@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd) 
 PROJECT_ROOT=$(readlink -f "$SCRIPT_DIR/../../");
 
-BINARIES=(eslint istanbul mocha nodemon)
+BINARIES=(eslint istanbul mocha nodemon webpack)
 
 for binary in ${BINARIES[@]}; do
     if [ ! -L "$PROJECT_ROOT/$binary" ]; then
