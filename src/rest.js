@@ -287,6 +287,7 @@ resources.Images = class extends resources.Resource {
     return {
       ...super.defaults(),
       root: '/images',
+      model: models.Image,
     };
   }
 
