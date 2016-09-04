@@ -1,8 +1,9 @@
 import path from 'path';
 import lang from './lang';
-import { each } from 'lodash';
+import { each } from 'lodash/each';
+import { map } from 'lodash/map';
 import querystring from './querystring';
-import xml from './xml';
+import libxml from './xml';
 import xpath from 'xpath';
 import models from './models';
 
@@ -11,6 +12,9 @@ const NotImplemented = class NotImplemented extends Error {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * HTTP client
+ */
 export const Client = class {
 
   /**
@@ -167,8 +171,9 @@ resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => xml.dom(response.text()))
-    .then((dom) => this.createModels(dom))
+    .then((response) => response.text())
+    .then((xml) => this.parseModelIds(xml))
+    .then((ids) => this.createModels(ids))
   }
 
   /**
@@ -179,35 +184,23 @@ resources.Resource = class {
    */
   get (id) {
     return this.client.get(`${this.options.root}/${id}`)
-    .then((response) => xml.dom(response.text()))
+    .then((response) => response.text())
     .then((xml) => this.parseModelAttributes(xml))
     .then((attrs) => this.createModel(attrs))
   }
 
   /**
-   * Given the API response payload for a single domain object, return a plain
-   * object that contains model attributes.
-   * @param {xmldom.Document} dom
-   * @return {Object}
-   */
-  parseModelAttributes (dom) {
-    throw new NotImplemented();
-  }
-
-  /**
-   * Given an API response payload that contains a collection of domain
-   * objects, map the collection to an Array containing Model instances.
+   * Map a list of model ids to model instances.
    * @async Promise
-   * @param {xmldom.Document} dom
+   * @param {Array} ids
    * @return {Array}
    */
-  createModels (dom) {
-    throw new NotImplemented();
+  createModels (ids) {
+    return P.all(ids.map((id) => this.get(id)));
   }
 
   /**
    * Given an object containing model attributes, return a Model instance.
-   * @async Promise
    * @param {Object} attrs
    * @return {Model}
    */
@@ -216,6 +209,34 @@ resources.Resource = class {
     return new constructor(attrs);
   }
 
+  /**
+   * Given the API response payload for a list of objects, return a list of
+   * model ids.
+   * @async Promise
+   * @param {String} xml
+   * @return {Array}
+   */
+  parseModelIds (xml) {
+    throw new NotImplemented();
+  }
+
+  /**
+   * Given the API response payload for a single domain object, return a plain
+   * object that contains model attributes.
+   * @param {String} xml
+   * @return {Object}
+   */
+  parseModelAttributes (xml) {
+    return libxml.parse(xml)
+
+    .then((obj) => {
+      obj = obj.prestashop.product[0];
+
+      return {
+        id: obj.id[0].trim(),
+      }
+    });
+  }
 }
 
 resources.Languages = class extends resources.Resource {
@@ -245,27 +266,15 @@ resources.Products = class extends resources.Resource {
     };
   }
 
-  resources () {
-    return {
-      images: new rest.resources.Images({
-        root: `/images/products/${this.attr('id')}`,
-      }),
-    };
-  }
+  parseModelIds (xml) {
+    return libxml.parse(xml)
 
-  /**
-   * {@inheritdoc}
-   */
-  parseModelAttributes (xmlstr) {
-    return xml.parse(xmlstr)
     .then((obj) => {
-      obj = obj.prestashop.product[0];
-
-      return {
-        id: obj.id[0].trim(),
-      }
+      let list = obj.prestashop.products[0].product;
+      return list.map((obj) => obj.$.id);
     });
   }
+
 }
 
 resources.Images = class extends resources.Resource {

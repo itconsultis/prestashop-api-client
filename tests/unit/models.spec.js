@@ -44,7 +44,7 @@ describe('models', () => {
         let model = new models.Model();
         let resources = {images: {}};
 
-        model.resources = sinon.stub().withArgs('images').returns(resources);
+        model.resources = stub().withArgs('images').returns(resources);
         expect(model.related('images')).to.equals(resources.images);
         expect(model.resources.calledOnce).to.be.ok;
       });
@@ -54,7 +54,7 @@ describe('models', () => {
         let resources = {};
         let badcall = () => model.related('notfound');
 
-        model.resources = sinon.stub().withArgs('images').returns(resources);
+        model.resources = stub().withArgs('images').returns(resources);
         expect(badcall).to.throw(Error);;
       });
 

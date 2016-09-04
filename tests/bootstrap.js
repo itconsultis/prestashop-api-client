@@ -5,6 +5,10 @@ import path from 'path';
 
 global.expect = expect;
 global.sinon = sinon;
+global.match = sinon.match;
+global.spy = sinon.spy;
+global.stub = sinon.stub;
+global.mock = sinon.mock;
 
 /**
  * @param {String} abspath

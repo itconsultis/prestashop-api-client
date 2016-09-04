@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit --slow 100",
-    "start": "./nodemon -x 'npm test'"
+    "start": "./nodemon -x 'npm test || true'"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",

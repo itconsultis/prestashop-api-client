@@ -1,7 +1,6 @@
 import { Client } from '../../../src/rest';
 
 const P = Promise;
-const match = sinon.match;
 
 describe('rest.Client', () => {
 
@@ -31,7 +30,7 @@ describe('rest.Client', () => {
 
   describe('#get()', () => {
     it('sends a GET request', (done) => {
-      let fetch = sinon.stub();
+      let fetch = stub();
       let response = {ok: true};
       let promise = P.resolve(response);
       let client = new Client({fetch: {algo: fetch}});
@@ -45,7 +44,7 @@ describe('rest.Client', () => {
     });
 
     it('throws an Error on non-OK response', (done) => {
-      let fetch = sinon.stub();
+      let fetch = stub();
       let response = {ok: false};
       let promise = P.resolve(response);
       let client = new Client({fetch: {algo: fetch}});
