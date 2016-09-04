@@ -1,17 +1,20 @@
+const fs = require('fs');
+const babelcfg = JSON.parse(fs.readFileSync('.babelrc'));
+
 module.exports = {
   entry: './src/index.js',
   output: {
     path: './dist',
     filename: 'index.js',
   },
-  loaders: [
-    {
-      test: /src\/.*\.js$/,
-      loader: 'babel',
-      query: {
-        presets: ['es2015'],
-        plugins: ['transform-object-rest-spread'],
+  module: {
+    loaders: [
+      {
+        test: /^src\/.*\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: babelcfg,
       },
-    },
-  ],
+    ],
+  },
 };

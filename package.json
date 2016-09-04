@@ -6,7 +6,9 @@
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit --slow 100",
-    "start": "./nodemon -x 'npm test || true'"
+    "start": "./nodemon -x 'npm test || true'",
+    "build": "./webpack --display-error-details",
+    "publish": ".npm/scripts/publish"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
@@ -28,6 +30,7 @@
     "nodemon": "^1.10.2",
     "sinon": "^1.17.5",
     "webpack": "^1.13.2",
+    "webpack-uglify-js-plugin": "^1.1.9",
     "xmldom": "^0.1.22"
   }
 }
