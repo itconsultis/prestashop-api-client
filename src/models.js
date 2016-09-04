@@ -1,7 +1,6 @@
 import path from 'path';
 import lang from './lang';
 import querystring from './querystring';
-import xml from './xml';
 import rest from './rest';
 import each from 'lodash/each';
 
@@ -18,8 +17,9 @@ export default models;
 export const Model = models.Model = class {
 
   /**
-   * Define
-   *
+   * Define attribute mutators
+   * @param void
+   * @return {Object}
    */
   static mutators () {
     return {
@@ -39,6 +39,7 @@ export const Model = models.Model = class {
   }
 
   /**
+   * Return a dictionary of related rest.Resource instances
    * @param void
    * @return {Object}
    */
@@ -112,7 +113,8 @@ export const Model = models.Model = class {
    * @return {rest.resources.Resource}
    */
   related (key) {
-    let resource = this.resources()[key];
+    let resources = this.resources();
+    let resource = resources[key];
 
     if (!resource) {
       throw new Error('related resource not found on key '+key);
