@@ -2,7 +2,7 @@ import path from 'path';
 import lang from './lang';
 import querystring from './querystring';
 import rest from './rest';
-import each from 'lodash/each';
+import { each } from 'lodash';
 
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}

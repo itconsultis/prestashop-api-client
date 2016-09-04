@@ -1,7 +1,6 @@
 import path from 'path';
 import lang from './lang';
-import { each } from 'lodash/each';
-import { map } from 'lodash/map';
+import { each } from 'lodash';
 import querystring from './querystring';
 import libxml from './xml';
 import models from './models';
