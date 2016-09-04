@@ -265,6 +265,9 @@ resources.Products = class extends resources.Resource {
     };
   }
 
+  /**
+   * @inheritdoc
+   */
   parseModelIds (xml) {
     return libxml.parse(xml)
 
