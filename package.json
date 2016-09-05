@@ -5,10 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
-    "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit --slow 100",
+    "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
     "start": "./nodemon -x 'npm test || true'",
-    "build": "./webpack --display-error-details",
-    "publish": ".npm/scripts/publish"
+    "build": "./webpack --display-error-details"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
@@ -22,6 +21,7 @@
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
+    "babel-preset-stage-2": "^6.13.0",
     "babel-register": "^6.14.0",
     "chai": "^3.5.0",
     "eslint": "^3.4.0",
