@@ -1,4 +1,5 @@
 /node_modules
+/babel
 /eslint
 /istanbul
 /mocha
