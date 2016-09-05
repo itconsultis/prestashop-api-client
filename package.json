@@ -1,6 +1,6 @@
 {
   "name": "prestashop-api-client",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "",
   "main": "./dist/index.js",
   "scripts": {
@@ -8,7 +8,7 @@
     "pretest": ".npm/scripts/build",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
     "start": "./nodemon -w ./src -x 'npm test || true'",
-    "prepublish": ".npm/scripts/build"
+    "prepublish": "npm test"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
