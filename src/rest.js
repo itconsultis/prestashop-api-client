@@ -19,9 +19,9 @@ export const Client = class {
    * @param void
    * @return {rest.Client}
    */
-  static instance () {
+  static instance (options={}) {
     if (!this.singleton) {
-      this.singleton = new this();
+      this.singleton = new this(options);
     }
     return this.singleton;
   }
