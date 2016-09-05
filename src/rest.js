@@ -20,10 +20,7 @@ export const Client = class {
    * @return {rest.Client}
    */
   static instance (options={}) {
-    if (!this.singleton) {
-      this.singleton = new this(options);
-    }
-    return this.singleton;
+    return new this(options);
   }
 
   /**
@@ -52,9 +49,14 @@ export const Client = class {
         root: '/shop/api',
       },
 
+      // default request headers
+      headers: {
+        'Output-Format': 'xml',
+      },
+
       // Fetch-related options
       fetch: {
-        // the fetch function
+        // the actual fetch function; facilitates testing
         algo: fetch,
         // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
         defaults: {
@@ -109,14 +111,6 @@ export const Client = class {
     }
 
     return `${proxy.scheme}://${proxy.host}${fullpath}`;
-  }
-
-  /**
-   * @param {Object} augments
-   * @return {Object}
-   */
-  createFetchOptions (augments={}) {
-    return {cache: 'default', ...augments};
   }
 
   /**
@@ -192,6 +186,15 @@ export const Resource = resources.Resource = class {
   }
 
   /**
+   * Return the first member of a list() result
+   * @param void
+   * @return {models.Model}
+   */
+  first () {
+    return this.list().then(models => models[0] || null);
+  }
+
+  /**
    * Resolve a single Model instance
    * @async Promise
    * @param {mixed} id
@@ -252,6 +255,7 @@ export const Resource = resources.Resource = class {
       }
     });
   }
+
 }
 
 resources.Languages = class extends Resource {
@@ -309,5 +313,20 @@ resources.Images = class extends Resource {
   }
 
 }
+
+resources.Combinations = class extends Resource {
+
+  /**
+   * @inheritdoc
+   */
+  defaults () {
+    return {
+      ...super.defaults(),
+      root: '/combinations',
+      model: models.Combination,
+    };
+  }
+}
+
 
 export default { Client, resources };

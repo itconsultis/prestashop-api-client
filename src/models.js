@@ -125,17 +125,22 @@ export const Model = models.Model = class {
 
 }
 
-export const Language = models.Language = class extends models.Model {
+export const Language = models.Language = class extends Model {
   // implement me
 }
 
-export const Product = models.Product = class extends models.Model {
+export const Combination = models.Combination = class extends Model {
+  // implement me
+}
+
+export const Product = models.Product = class extends Model {
 
   /**
    * @inheritdoc
    */
   resources () {
     return {
+      combinations: new rest.resources.Combinations(),
       images: new rest.resources.Images({
         root: `/images/products/${this.get('id')}`,
       }),
@@ -144,7 +149,7 @@ export const Product = models.Product = class extends models.Model {
 
 }
 
-export const Image = models.Image = class extends models.Model {
+export const Image = models.Image = class extends Model {
 
   /**
    * @inheritdoc

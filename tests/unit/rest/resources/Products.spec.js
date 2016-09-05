@@ -3,6 +3,7 @@ import { Product } from '../../../../dist/models';
 
 const { Products } = resources;
 const P = Promise;
+const error = new Error();
 
 describe('rest.resources.Products', () => {
 
@@ -26,7 +27,7 @@ describe('rest.resources.Products', () => {
       })
 
       .then(done)
-      .catch(done);
+      .catch((e) => done(error));
     });
 
   });
@@ -61,8 +62,7 @@ describe('rest.resources.Products', () => {
       })
 
       .then(done)
-      .catch(done)
-
+      .catch((e) => done(error));
     });
   });
 

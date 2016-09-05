@@ -1,5 +1,5 @@
 import models from '../../dist/models';
-import rest from '../../src/rest';
+import rest from '../../dist/rest';
 
 describe('models', () => {
 
@@ -40,6 +40,7 @@ describe('models', () => {
     });
 
     describe('#related', () => {
+
       it('returns a named resource', () => {
         let model = new models.Model();
         let resources = {images: {}};
@@ -65,12 +66,25 @@ describe('models', () => {
   describe('Product', () => {
 
     describe('#related', () => {
-      xit('provides related images', () => {
-        let model = new models.Product({id: 1});
-        let resource = model.related('images');
 
-        expect(resource).to.be.an.instanceof(rest.resources.Images);
+      describe('images', () => {
+        it('provides Images resource', () => {
+          let model = new models.Product({id: 1});
+          let resource = model.related('images');
+
+          expect(resource).to.be.an.instanceof(rest.resources.Images);
+        });
       });
+
+      describe('combinations', () => {
+        it('provides Combinations resource', () => {
+          let model = new models.Product({id: 1});
+          let resource = model.related('combinations');
+
+          expect(resource).to.be.an.instanceof(rest.resources.Combinations);
+        });
+      });
+
     });
   });
 
