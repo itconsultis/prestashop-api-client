@@ -1,5 +1,5 @@
-import { resources } from '../../../../src/rest';
-import { Product } from '../../../../src/models';
+import { resources } from '../../../../dist/rest';
+import { Product } from '../../../../dist/models';
 
 const { Products } = resources;
 const P = Promise;

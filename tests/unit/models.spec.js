@@ -1,4 +1,4 @@
-import models from '../../src/models';
+import models from '../../dist/models';
 import rest from '../../src/rest';
 
 describe('models', () => {
@@ -45,7 +45,7 @@ describe('models', () => {
         let resources = {images: {}};
 
         model.resources = stub().withArgs('images').returns(resources);
-        expect(model.related('images')).to.equals(resources.images);
+        expect(model.related('images')).to.equal(resources.images);
         expect(model.resources.calledOnce).to.be.ok;
       });
 
@@ -65,7 +65,7 @@ describe('models', () => {
   describe('Product', () => {
 
     describe('#related', () => {
-      it('provides related images', () => {
+      xit('provides related images', () => {
         let model = new models.Product({id: 1});
         let resource = model.related('images');
 
