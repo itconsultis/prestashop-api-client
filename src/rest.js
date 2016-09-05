@@ -130,6 +130,23 @@ export const Client = class {
     }
   }
 
+  /**
+   *
+   *
+   */
+  resource (key) {
+    let dict = {
+      products: resources.Products,
+    };
+
+    let constructor = dict[key];
+
+    if (!constructor) {
+      throw new Error(`root resource not found: "${key}"`);
+    }
+
+    return new constructor({client: this});
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
