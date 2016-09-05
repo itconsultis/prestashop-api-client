@@ -58,5 +58,15 @@ describe('rest.Client', () => {
 
   });
 
+  describe('root resource access', () => {
+    let client = new Client();
+
+    describe('#resource()', () => {
+      it('returns a Products resource on key "products"', () => {
+        expect(client.resource('products')).to.be.ok;
+      });
+    })
+  });
+
 });
 
