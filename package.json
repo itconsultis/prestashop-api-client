@@ -7,7 +7,7 @@
     "postinstall": ".npm/scripts/postinstall",
     "pretest": ".npm/scripts/build",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
-    "start": "./nodemon -w ./src -x 'npm test || true'",
+    "start": "./nodemon --ignore ./dist -x 'npm test || true'",
     "prepublish": "npm test"
   },
   "author": "IT Consultis <tech@it-consultis.com",
