@@ -1,15 +1,18 @@
-import _ from 'lodash';
 import path from 'path';
 import lang from './lang';
-import xml2js from 'xml2js';
-import { LocalCache as LocalStorageCache } from 'localcache';
-import { querystring, XML } from './support';
+import { each } from 'lodash';
+import querystring from './querystring';
+import libxml from './xml';
+import models from './models';
 
 const P = Promise;
 const NotImplemented = class NotImplemented extends Error {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * HTTP client
+ */
 export const Client = class {
 
   /**
@@ -29,26 +32,33 @@ export const Client = class {
    * @return {Object}
    */
   defaults () {
+    let location = global.location || {
+      protocol: 'https:',
+      host: 'localhost',
+    };
+
+    let fetch = global.fetch || (() => {
+      return P.reject(new Error('fetch is not a global symbol'));
+    });
+
     return {
-      // prestashop language id
+      // ISO language code
       language: 'en',
 
       // API proxy configuration
       proxy: {
-        scheme: window.location.protocol.slice(0, -1),
-        host: window.location.host,
-        path: '/shop/api',
+        scheme: location.protocol.slice(0, -1),
+        host: location.host,
+        root: '/shop/api',
       },
 
       // Fetch-related options
       fetch: {
-        // the fetch function; mainly to make unit testing easier
+        // the fetch function
         algo: fetch,
-        // Request options
+        // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
         defaults: {
-          // https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
           cache: 'default',
-          // https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
           mode: 'same-origin',
         },
       },
@@ -92,7 +102,7 @@ export const Client = class {
    */
   url (uri, query={}) {
     let proxy = this.options.proxy;
-    let fullpath = path.join(proxy.path, uri);
+    let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
       fullpath += '?' + querystring.stringify(query);
@@ -128,7 +138,7 @@ export const resources = {};
 /**
  * a REST resource
  */
-resources.Resource = class {
+export const Resource = resources.Resource = class {
 
   /**
    * Return instance configuration defaults
@@ -137,8 +147,9 @@ resources.Resource = class {
    */
   defaults () {
     return {
-      client: rest.Client.instance(),
+      client: Client.instance(),
       root: '/',
+      model: models.Model,
     };
   }
 
@@ -158,8 +169,9 @@ resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => XML.parse(response.text()))
-    .then((objects) => this.createModels(payload))
+    .then((response) => response.text())
+    .then((xml) => this.parseModelIds(xml))
+    .then((ids) => this.createModels(ids))
   }
 
   /**
@@ -170,34 +182,62 @@ resources.Resource = class {
    */
   get (id) {
     return this.client.get(`${this.options.root}/${id}`)
-    .then((object) => this.createModel(object));
+    .then((response) => response.text())
+    .then((xml) => this.parseModelAttributes(xml))
+    .then((attrs) => this.createModel(attrs))
   }
 
   /**
-   * Given an API response payload that contains a collection of domain
-   * objects, map the collection to an Array containing Model instances.
+   * Map a list of model ids to model instances.
    * @async Promise
-   * @param {Array} objects
+   * @param {Array} ids
    * @return {Array}
    */
-  createModels (payload) {
-    throw new NotImplemented();
+  createModels (ids) {
+    return P.all(ids.map((id) => this.get(id)));
   }
 
   /**
-   * Given an API response payload that contains a single domain object,
-   * return a Model instance.
-   * @async Promise
-   * @param {Object} payload
+   * Given an object containing model attributes, return a Model instance.
+   * @param {Object} attrs
    * @return {Model}
    */
-  createModel (payload) {
+  createModel (attrs) {
+    let constructor = this.options.model;
+    return new constructor(attrs);
+  }
+
+  /**
+   * Given the API response payload for a list of objects, return a list of
+   * model ids.
+   * @async Promise
+   * @param {String} xml
+   * @return {Array}
+   */
+  parseModelIds (xml) {
     throw new NotImplemented();
   }
 
+  /**
+   * Given the API response payload for a single domain object, return a plain
+   * object that contains model attributes.
+   * @param {String} xml
+   * @return {Object}
+   */
+  parseModelAttributes (xml) {
+    return libxml.parse(xml)
+
+    .then((obj) => {
+      obj = obj.prestashop.product[0];
+
+      return {
+        id: obj.id[0].trim(),
+      }
+    });
+  }
 }
 
-resources.Languages = class extends resources.Resource {
+resources.Languages = class extends Resource {
 
   /**
    * @inheritdoc
@@ -205,13 +245,13 @@ resources.Languages = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/languages',  
+      root: '/languages',  
     };
   }
 
 }
 
-resources.Products = class extends resources.Resource {
+resources.Products = class extends Resource {
 
   /**
    * @inheritdoc
@@ -219,27 +259,26 @@ resources.Products = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/products',
+      root: '/products',
+      model: models.Product,
     };
   }
 
   /**
-   * {@inheritdoc}
+   * @inheritdoc
    */
-  createModels (payload) {
+  parseModelIds (xml) {
+    return libxml.parse(xml)
 
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  createModel (payload) {
-
+    .then((obj) => {
+      let list = obj.prestashop.products[0].product;
+      return list.map((obj) => obj.$.id);
+    });
   }
 
 }
 
-resources.Images = class extends resources.Resource {
+resources.Images = class extends Resource {
 
   /**
    * @inheritdoc
@@ -247,22 +286,11 @@ resources.Images = class extends resources.Resource {
   defaults () {
     return {
       ...super.defaults(),
-      path: '/images',
+      root: '/images',
+      model: models.Image,
     };
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  createModels (payload) {
-
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  createModel (payload) {
-
-  }
-
 }
+
+export default { Client, resources };

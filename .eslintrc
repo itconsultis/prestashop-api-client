@@ -2,5 +2,9 @@
   "parser": "babel-eslint",
   "rules": {
     "strict": 0
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "allowImportExportEverywhere": false
   }
 }

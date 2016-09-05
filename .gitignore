@@ -1,7 +1,10 @@
 /node_modules
+/eslint
+/istanbul
 /mocha
 /nodemon
-/eslint
+
+npm-debug.log
 
 *.swp
 *.swo
