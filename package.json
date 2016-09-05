@@ -2,12 +2,12 @@
   "name": "prestashop-api-client",
   "version": "0.1.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
     "start": "./nodemon -x 'npm test || true'",
-    "build": "./babel src -o dist/index.js"
+    "prepublish": "./babel src --out-dir dist"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
@@ -30,8 +30,6 @@
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
     "sinon": "^1.17.5",
-    "webpack": "^1.13.2",
-    "webpack-uglify-js-plugin": "^1.1.9",
     "xmldom": "^0.1.22"
   }
 }

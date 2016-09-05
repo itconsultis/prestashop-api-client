@@ -10,7 +10,7 @@ module.exports = {
   module: {
     loaders: [
       {
-        test: /^src\/.*\.js$/,
+        test: /^src\//,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: babelcfg,
