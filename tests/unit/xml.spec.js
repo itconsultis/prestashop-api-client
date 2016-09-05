@@ -1,4 +1,4 @@
-import xml from '../../src/xml';
+import xml from '../../dist/xml';
 
 describe('xml', () => {
 

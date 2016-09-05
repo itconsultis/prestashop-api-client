@@ -5,9 +5,10 @@
   "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
+    "pretest": ".npm/scripts/build",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
-    "start": "./nodemon -x 'npm test || true'",
-    "prepublish": "./babel src --out-dir dist"
+    "start": "./nodemon -w ./src -x 'npm test || true'",
+    "prepublish": ".npm/scripts/build"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",

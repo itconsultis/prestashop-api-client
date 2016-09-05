@@ -1,4 +1,4 @@
-import { Client } from '../../../src/rest';
+import { Client } from '../../../dist/rest';
 
 const P = Promise;
 

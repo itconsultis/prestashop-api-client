@@ -1,4 +1,4 @@
-import { empty } from '../../src/lang';
+import { empty } from '../../dist/lang';
 import assert from 'assert';
 
 describe('lang', () => {
