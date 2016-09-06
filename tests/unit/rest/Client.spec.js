@@ -44,7 +44,7 @@ describe('rest.Client', () => {
         done();
       })
 
-      .catch((e) => done(error))
+      .catch(done)
     });
 
     it('throws an Error on non-OK response', (done) => {
@@ -57,7 +57,7 @@ describe('rest.Client', () => {
 
       client.get('/foo/bar')
       .then((res) => expect.fail())
-      .catch((e) => done());
+      .catch(() => done())
     });
 
   });
