@@ -7,6 +7,10 @@
   "keywords": [
     "prestashop"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:itconsultis/prestashop-api-client.git"
+  },
   "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
