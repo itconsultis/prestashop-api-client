@@ -173,18 +173,18 @@
         </meta_title>
         <link_rewrite>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[elliott-erwitt-malecon-cuba-2015]]>
+                <![CDATA[product-9-rewrite-en]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[elliott-erwitt-malecon-cuba-2015]]>
+                <![CDATA[product-9-rewrite-es]]>
             </language>
         </link_rewrite>
         <name>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[Elliott Erwitt Malecón. Cuba. 2015]]>
+                <![CDATA[product-9-name-en]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[Elliott Erwitt Malecón. Cuba. 2015]]>
+                <![CDATA[product-9-name-es]]>
             </language>
         </name>
         <description>

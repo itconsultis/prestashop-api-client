@@ -3,7 +3,7 @@ import lang from './lang';
 import { each } from 'lodash';
 import querystring from './querystring';
 import { NotImplemented } from './exceptions';
-import libxml from './xml';
+import { parse } from './xml';
 import models from './models';
 import { coerce } from './lang';
 
@@ -41,19 +41,18 @@ export const Client = class {
     });
 
     return {
-      // ISO language code
       language: 'en',
+
+      languages: {
+        'en': 1,
+        'es': 2,
+      },
 
       // API proxy configuration
       proxy: {
         scheme: location.protocol.slice(0, -1),
         host: location.host,
         root: '/shop/api',
-      },
-
-      // default request headers
-      headers: {
-        'Output-Format': 'xml',
       },
 
       // Fetch-related options
@@ -75,6 +74,16 @@ export const Client = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
+  }
+
+  /**
+   * Return a Prestashop API language id
+   * @property
+   * @type {Number}
+   */
+  get language () {
+    let opts = this.options;
+    return opts.languages[opts.language];
   }
 
   /**
@@ -133,6 +142,8 @@ export const Client = class {
   resource (key) {
     let dict = {
       products: resources.Products,
+      manufacturers: resources.Manufacturers,
+      combinations: resources.Combinations,
     };
 
     let constructor = dict[key];
@@ -143,6 +154,7 @@ export const Client = class {
 
     return new constructor({client: this});
   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,6 +187,15 @@ export const Resource = resources.Resource = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.client = this.options.client;
+  }
+
+  /**
+   * Return a PrestaShop language id
+   * @property
+   * @type {Number}
+   */
+  get language () {
+    return this.client.language;
   }
 
   /**
@@ -254,20 +275,6 @@ export const Resource = resources.Resource = class {
 
 }
 
-resources.Languages = class extends Resource {
-
-  /**
-   * @inheritdoc
-   */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/languages',  
-    };
-  }
-
-}
-
 resources.Products = class extends Resource {
 
   /**
@@ -285,32 +292,14 @@ resources.Products = class extends Resource {
    * @inheritdoc
    */
   parseModelIds (xml) {
-    return libxml.parse(xml)
-
-    .then((obj) => {
-      let list = obj.prestashop.products[0].product;
-      return list.map((obj) => obj.$.id);
-    });
+    return parse.product.ids(xml);
   }
 
   /**
    * @inheritdoc
    */
   parseModelProperties (xml) {
-    return libxml.parse(xml)
-
-    .then((obj) => {
-      obj = obj.prestashop.product[0];
-
-      let combos = obj.associations[0].combinations[0].combination;
-
-      return {
-        id: obj.id[0].trim(),
-        _related: {
-          combinations: combos.map(combo => integer(combo.id[0].trim())),
-        },
-      }
-    });
+    return parse.product.properties(xml);
   }
 
 }
@@ -351,18 +340,23 @@ resources.Images = class extends Resource {
    * @return {Array}
    */
   parseImageProperties (xml) {
-    return libxml.parse(xml)
+    return parse.image.properties(xml);
+  }
 
-    .then((obj) => {
-      let decs = obj.prestashop.image[0].declination;
+}
 
-      return decs.map((dec) => {
-        return {
-          id: dec.$.id,
-          src: dec.$['xlink:href'],
-        };
-      });
-    })
+
+resources.Manufacturers = class extends Resource {
+
+  /**
+   * @inheritdoc
+   */
+  defaults () {
+    return {
+      ...super.defaults(),
+      root: '/manufacturers',
+      model: models.Manufacturer,
+    };
   }
 
 }
