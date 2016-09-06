@@ -1,11 +1,11 @@
 import path from 'path';
 import lang from './lang';
 import querystring from './querystring';
-import rest from './rest';
+import { resources } from './rest';
 import { each } from 'lodash';
+import { NotImplemented } from './exceptions';
 
 const P = Promise;
-const NotImplemented = class NotImplemented extends Error {}
 const { bool, integer, number, string } = lang.coerce;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,143 +17,118 @@ export default models;
 export const Model = models.Model = class {
 
   /**
-   * Define attribute mutators
-   * @param void
-   * @return {Object}
-   */
-  static mutators () {
-    return {
-      // attribute: [set-mutator, get-mutator],
-      // 'active': [integer, bool],
-      id: [integer],
-    };
-  }
-
-  /**
    * Return default model attributes
    * @param void
    * @return {Object}
    */
   defaults () {
-    return {};
+    return {
+      client: null,
+      props: {},
+    };
   }
 
   /**
-   * Return a dictionary of related rest.Resource instances
+   * Define property mutators
    * @param void
    * @return {Object}
    */
-  resources () {
-    return {};
+  mutators () {
+    return {
+      // property: [set-mutator, get-mutator],
+      id: [integer]
+    };
   }
 
   /**
    * @param {Object} attrs - initial model attributes
    */
-  constructor (attrs={}) {
-    this.attrs = {};
-    this.set({...this.defaults(), ...attrs});
-  }
+  constructor (options={}) {
+    let defaults = this.defaults();
+    let props = options.props || {};
 
-  /** 
-   * Return a single attribute value
-   * @param {String} attr
-   * @param mixed fallback
-   * @return mixed
-   */
-  get (attr, fallback=undefined) {
-    let attrs = this.attrs;
+    this._client = options.client || defaults.client;
 
-    if (!attrs.hasOwnProperty(attr)) {
-      if (fallback === undefined) {
-        throw new Error(`attribute "${attr}" is undefined`);
-      }
-      return fallback;
-    }
-
-    return attrs[attr];
+    this.set({...defaults.props, ...props});
   }
 
   /**
-   * Set a single attribute, or mass-assign multiple attributes
-   * @param {...*} args
+   * Assign a single property or mass-assign multiple properties. Map
+   * property values through the dictionary returned by mutators().
+   * @param ...mixed args
    * @return void
    */
   set (...args) {
     let arity = args.length;
+    let mutators = this.mutators();
+    let raw = v => v;
 
-    if (arity === 0) {
+    let assign = (value, prop) => {
+      let [set] = mutators[prop] || [raw];
+      this[prop] = set(value);
+    };
+
+    if (arity < 1) {
       throw new Error('expected at least one argument');
     }
     if (arity > 2) {
       throw new Error('expected no more than two arguments');
     }
 
-    let mutators = this.constructor.mutators();
-
-    let assign = (value, attr) => {
-      let [set] = mutators[attr] || [v=>v];
-      this.attrs[attr] = set(value);
-    };
-
     if (arity === 1) {
-      let [attrs] = args;
-      each(attrs, assign);
+      each(args[0], assign);
       return;
     }
 
-    let [attr, value] = args;
-    assign(value, attr);
-  }
-
-  /**
-   * Return a related resource
-   * @see #resources()
-   * @param {String} key
-   * @return {rest.resources.Resource}
-   */
-  related (key) {
-    let resources = this.resources();
-    let resource = resources[key];
-
-    if (!resource) {
-      throw new Error('related resource not found on key '+key);
-    }
-
-    return resource;
+    let [prop, value] = args;
+    assign(value, prop);
   }
 
 }
 
-export const Language = models.Language = class extends models.Model {
+export const Language = models.Language = class extends Model {
   // implement me
 }
 
-export const Product = models.Product = class extends models.Model {
-
-  /**
-   * @inheritdoc
-   */
-  resources () {
-    return {
-      images: new rest.resources.Images({
-        root: `/images/products/${this.get('id')}`,
-      }),
-    };
-  }
-
+export const Combination = models.Combination = class extends Model {
+  // implement me
 }
 
-export const Image = models.Image = class extends models.Model {
+export const Product = models.Product = class extends Model {
 
   /**
-   * @inheritdoc
+   * Return rest.Resource that represents related images
+   * @param void
+   * @return {rest.resources.Images}
    */
-  defaults () {
-    return {
-      url: '',
-    };
+  images () {
+    return new resources.Images({
+      client: this._client,
+      root: `/images/products/${this.id}`,
+    });
   }
 
+
+  /**
+   * Return rest.Resource that represents related combinations
+   * @param void
+   * @return {rest.resources.Combinations}
+   */
+  combinations () {
+    return new resources.Combinations({
+      client: this._client,
+      filter: (combo) => {
+        return this._related.combinations.indexOf(combo.id) > -1;
+      },
+    });
+  }
+}
+
+export const Image = models.Image = class extends Model {
+  // implement me
+}
+
+export const Combinations = models.Combination = class extends Model {
+  // implement me
 }
 

@@ -1,6 +1,6 @@
 import { Client } from '../../../dist/rest';
-
 const P = Promise;
+const error = new Error();
 
 describe('rest.Client', () => {
 
@@ -37,10 +37,14 @@ describe('rest.Client', () => {
 
       fetch.withArgs(match.string, match.object).returns(promise);
 
-      client.get('/foo/bar').then((res) => {
+      client.get('/foo/bar')
+      
+      .then((res) => {
         expect(res).to.equal(response);
         done();
-      });
+      })
+
+      .catch((e) => done(error))
     });
 
     it('throws an Error on non-OK response', (done) => {

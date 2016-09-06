@@ -3,6 +3,7 @@ import { Product } from '../../../../dist/models';
 
 const { Products } = resources;
 const P = Promise;
+const error = () => new Error();
 
 describe('rest.resources.Products', () => {
 
@@ -26,7 +27,7 @@ describe('rest.resources.Products', () => {
       })
 
       .then(done)
-      .catch(done);
+      .catch(done)
     });
 
   });
@@ -56,13 +57,12 @@ describe('rest.resources.Products', () => {
 
         let [product8, product9] = models;
 
-        expect(product8.get('id')).to.equal(8);
-        expect(product9.get('id')).to.equal(9);
+        expect(product8.id).to.equal(8);
+        expect(product9.id).to.equal(9);
       })
 
       .then(done)
       .catch(done)
-
     });
   });
 
