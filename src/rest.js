@@ -41,19 +41,18 @@ export const Client = class {
     });
 
     return {
-      // ISO language code
       language: 'en',
+
+      languages: {
+        'en': 1,
+        'es': 2,
+      },
 
       // API proxy configuration
       proxy: {
         scheme: location.protocol.slice(0, -1),
         host: location.host,
         root: '/shop/api',
-      },
-
-      // default request headers
-      headers: {
-        'Output-Format': 'xml',
       },
 
       // Fetch-related options
@@ -75,6 +74,17 @@ export const Client = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
+  }
+
+  /**
+   * Return a Prestashop API language id
+   * @property
+   * @param void
+   * @return {Number}
+   */
+  get language () {
+    let opts = this.options;
+    return opts.languages[opts.language];
   }
 
   /**
@@ -143,6 +153,7 @@ export const Client = class {
 
     return new constructor({client: this});
   }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +317,7 @@ resources.Products = class extends Resource {
 
       return {
         id: obj.id[0].trim(),
-        _related: {
+        related: {
           combinations: combos.map(combo => integer(combo.id[0].trim())),
         },
       }

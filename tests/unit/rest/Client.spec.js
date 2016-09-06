@@ -4,6 +4,20 @@ const error = new Error();
 
 describe('rest.Client', () => {
 
+  describe('#language property', () => {
+    it('is a language id', () => {
+      let client = new Client({
+        language: 'es',
+        languages: {
+          'en': 1,
+          'es': 2,
+        },
+      });
+
+      expect(client.language).to.equal(2);
+    });
+  });
+
   describe('#url()', () => {
     it('derives a proxy url', () => {
       let client = new Client({

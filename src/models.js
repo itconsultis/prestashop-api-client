@@ -83,7 +83,6 @@ export const Model = models.Model = class {
     let [prop, value] = args;
     assign(value, prop);
   }
-
 }
 
 export const Language = models.Language = class extends Model {
@@ -108,7 +107,6 @@ export const Product = models.Product = class extends Model {
     });
   }
 
-
   /**
    * Return rest.Resource that represents related combinations
    * @param void
@@ -118,10 +116,11 @@ export const Product = models.Product = class extends Model {
     return new resources.Combinations({
       client: this._client,
       filter: (combo) => {
-        return this._related.combinations.indexOf(combo.id) > -1;
+        return this.related.combinations.indexOf(combo.id) > -1;
       },
     });
   }
+
 }
 
 export const Image = models.Image = class extends Model {
