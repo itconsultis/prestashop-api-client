@@ -3,7 +3,7 @@ import lang from './lang';
 import { each } from 'lodash';
 import querystring from './querystring';
 import { NotImplemented } from './exceptions';
-import libxml from './xml';
+import { parse } from './xml';
 import models from './models';
 import { coerce } from './lang';
 
@@ -142,6 +142,8 @@ export const Client = class {
   resource (key) {
     let dict = {
       products: resources.Products,
+      manufacturers: resources.Manufacturers,
+      combinations: resources.Combinations,
     };
 
     let constructor = dict[key];
@@ -290,32 +292,14 @@ resources.Products = class extends Resource {
    * @inheritdoc
    */
   parseModelIds (xml) {
-    return libxml.parse(xml)
-
-    .then((obj) => {
-      let list = obj.prestashop.products[0].product;
-      return list.map((obj) => obj.$.id);
-    });
+    return parse.product.ids(xml);
   }
 
   /**
    * @inheritdoc
    */
   parseModelProperties (xml) {
-    return libxml.parse(xml)
-
-    .then((obj) => {
-      obj = obj.prestashop.product[0];
-
-      let combos = obj.associations[0].combinations[0].combination;
-
-      return {
-        id: obj.id[0].trim(),
-        related: {
-          combinations: combos.map(combo => integer(combo.id[0].trim())),
-        },
-      }
-    });
+    return parse.product.properties(xml);
   }
 
 }
@@ -356,18 +340,23 @@ resources.Images = class extends Resource {
    * @return {Array}
    */
   parseImageProperties (xml) {
-    return libxml.parse(xml)
+    return parse.image.properties(xml);
+  }
 
-    .then((obj) => {
-      let decs = obj.prestashop.image[0].declination;
+}
 
-      return decs.map((dec) => {
-        return {
-          id: dec.$.id,
-          src: dec.$['xlink:href'],
-        };
-      });
-    })
+
+resources.Manufacturers = class extends Resource {
+
+  /**
+   * @inheritdoc
+   */
+  defaults () {
+    return {
+      ...super.defaults(),
+      root: '/manufacturers',
+      model: models.Manufacturer,
+    };
   }
 
 }

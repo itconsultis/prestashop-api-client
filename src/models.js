@@ -89,14 +89,24 @@ export const Language = models.Language = class extends Model {
   // implement me
 }
 
-export const Combination = models.Combination = class extends Model {
-  // implement me
-}
-
 export const Product = models.Product = class extends Model {
 
   /**
-   * Return rest.Resource that represents related images
+   * Return a rest.Resource that provides access to the related Manufacturer
+   * @param void
+   * @return {rest.resources.Combinations}
+   */
+  manufacturer () {
+    return new resources.Manufacturer({
+      client: this._client,
+      filter: (manufacturer) => {
+        return this.related.manufacturer.indexOf(manufacturer.id) > -1;
+      },
+    });
+  }
+
+  /**
+   * Return a rest.Resource that provides access to related Images
    * @param void
    * @return {rest.resources.Images}
    */
@@ -108,7 +118,7 @@ export const Product = models.Product = class extends Model {
   }
 
   /**
-   * Return rest.Resource that represents related combinations
+   * Return a rest.Resource that provides access to related Combinations
    * @param void
    * @return {rest.resources.Combinations}
    */
@@ -120,14 +130,17 @@ export const Product = models.Product = class extends Model {
       },
     });
   }
-
 }
 
 export const Image = models.Image = class extends Model {
   // implement me
 }
 
-export const Combinations = models.Combination = class extends Model {
+export const Combination = models.Combination = class extends Model {
+  // implement me
+}
+
+export const Manufacturer = models.Manufacturer = class extends Model {
   // implement me
 }
 
