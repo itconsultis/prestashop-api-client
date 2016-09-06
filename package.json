@@ -1,8 +1,10 @@
 {
   "name": "prestashop-api-client",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "PrestaShop API client",
   "homepage": "https://github.com/itconsultis/prestashop-api-client",
+  "bugs": "https://github.com/itconsultis/prestashop-api-client/issues",
+  "keywords": ["prestashop"],
   "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
