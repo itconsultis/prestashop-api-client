@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+    <image id="8">
+        <declination id="24" xlink:href="http://localhost/api/images/products/8/24"/>
+    </image>
+</prestashop>
+

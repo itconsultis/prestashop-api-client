@@ -2,11 +2,13 @@ import path from 'path';
 import lang from './lang';
 import { each } from 'lodash';
 import querystring from './querystring';
+import { NotImplemented } from './exceptions';
 import libxml from './xml';
 import models from './models';
+import { coerce } from './lang';
 
+const { integer } = coerce;
 const P = Promise;
-const NotImplemented = class NotImplemented extends Error {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -161,6 +163,9 @@ export const Resource = resources.Resource = class {
       client: Client.instance(),
       root: '/',
       model: models.Model,
+
+      // model list filter function
+      filter: model => true,
     };
   }
 
@@ -180,9 +185,9 @@ export const Resource = resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => response.text())
-    .then((xml) => this.parseModelIds(xml))
+    .then((response) => this.parseModelIds(response.text()))
     .then((ids) => this.createModels(ids))
+    .then((models) => models.filter(this.options.filter));
   }
 
   /**
@@ -202,9 +207,8 @@ export const Resource = resources.Resource = class {
    */
   get (id) {
     return this.client.get(`${this.options.root}/${id}`)
-    .then((response) => response.text())
-    .then((xml) => this.parseModelAttributes(xml))
-    .then((attrs) => this.createModel(attrs))
+    .then((response) => this.parseModelProperties(response.text()))
+    .then((props) => this.createModel(props));
   }
 
   /**
@@ -218,13 +222,13 @@ export const Resource = resources.Resource = class {
   }
 
   /**
-   * Given an object containing model attributes, return a Model instance.
-   * @param {Object} attrs
+   * Given an object containing model properties, return a Model instance.
+   * @param {Object} props
    * @return {Model}
    */
-  createModel (attrs) {
+  createModel (props) {
     let constructor = this.options.model;
-    return new constructor(attrs);
+    return new constructor({props: props});
   }
 
   /**
@@ -240,20 +244,12 @@ export const Resource = resources.Resource = class {
 
   /**
    * Given the API response payload for a single domain object, return a plain
-   * object that contains model attributes.
+   * object that contains model properties.
    * @param {String} xml
    * @return {Object}
    */
-  parseModelAttributes (xml) {
-    return libxml.parse(xml)
-
-    .then((obj) => {
-      obj = obj.prestashop.product[0];
-
-      return {
-        id: obj.id[0].trim(),
-      }
-    });
+  parseModelProperties (xml) {
+    throw new NotImplemented();
   }
 
 }
@@ -297,6 +293,26 @@ resources.Products = class extends Resource {
     });
   }
 
+  /**
+   * @inheritdoc
+   */
+  parseModelProperties (xml) {
+    return libxml.parse(xml)
+
+    .then((obj) => {
+      obj = obj.prestashop.product[0];
+
+      let combos = obj.associations[0].combinations[0].combination;
+
+      return {
+        id: obj.id[0].trim(),
+        _related: {
+          combinations: combos.map(combo => integer(combo.id[0].trim())),
+        },
+      }
+    });
+  }
+
 }
 
 resources.Images = class extends Resource {
@@ -312,7 +328,45 @@ resources.Images = class extends Resource {
     };
   }
 
+  /**
+   * @inheritdoc
+   */
+  list () {
+    return this.client.get(this.options.root)
+    .then((response) => this.parseImageProperties(response.text()))
+    .then((propsets) => propsets.map((props) => this.createModel(props)));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  get (id) {
+    throw new NotImplemented();
+  }
+
+  /**
+   * Return a list of urls given an XML payload
+   * @async Promise
+   * @param {String} xml
+   * @return {Array}
+   */
+  parseImageProperties (xml) {
+    return libxml.parse(xml)
+
+    .then((obj) => {
+      let decs = obj.prestashop.image[0].declination;
+
+      return decs.map((dec) => {
+        return {
+          id: dec.$.id,
+          src: dec.$['xlink:href'],
+        };
+      });
+    })
+  }
+
 }
+
 
 resources.Combinations = class extends Resource {
 
@@ -326,6 +380,7 @@ resources.Combinations = class extends Resource {
       model: models.Combination,
     };
   }
+
 }
 
 
