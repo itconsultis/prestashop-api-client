@@ -1,6 +1,8 @@
 import { Client } from '../../../dist/rest';
 const P = Promise;
 const error = new Error();
+const pass = () => P.resolve();
+const fail = () => expect.fail();
 
 describe('rest.Client', () => {
 
@@ -43,7 +45,7 @@ describe('rest.Client', () => {
   });
 
   describe('#get()', () => {
-    it('sends a GET request', (done) => {
+    it('sends a GET request', () => {
       let fetch = stub();
       let response = {ok: true};
       let promise = P.resolve(response);
@@ -51,17 +53,11 @@ describe('rest.Client', () => {
 
       fetch.withArgs(match.string, match.object).returns(promise);
 
-      client.get('/foo/bar')
-      
-      .then((res) => {
-        expect(res).to.equal(response);
-        done();
-      })
-
-      .catch(done)
+      return client.get('/foo/bar')
+      .then((res) => expect(res).to.equal(response))
     });
 
-    it('throws an Error on non-OK response', (done) => {
+    it('throws an Error on non-OK response', () => {
       let fetch = stub();
       let response = {ok: false};
       let promise = P.resolve(response);
@@ -69,9 +65,9 @@ describe('rest.Client', () => {
 
       fetch.withArgs(match.string, match.object).returns(promise);
 
-      client.get('/foo/bar')
-      .then((res) => expect.fail())
-      .catch(() => done())
+      return client.get('/foo/bar')
+      .then(fail)
+      .catch(pass);
     });
 
   });

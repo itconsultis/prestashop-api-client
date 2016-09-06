@@ -173,18 +173,18 @@
         </meta_title>
         <link_rewrite>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[elliott-erwitt-by-the-beach-havana-cuba-2015]]>
+                <![CDATA[product-8-rewrite-en]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[elliott-erwitt-by-the-beach-havana-cuba-2015]]>
+                <![CDATA[product-8-rewrite-es]]>
             </language>
         </link_rewrite>
         <name>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[Elliott Erwitt By the beach. Havana. Cuba. 2015]]>
+                <![CDATA[product-8-name-en]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[Elliott Erwitt By the beach. Havana. Cuba. 2015]]>
+                <![CDATA[product-8-name-es]]>
             </language>
         </name>
         <description>

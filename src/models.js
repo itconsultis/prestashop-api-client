@@ -100,7 +100,7 @@ export const Product = models.Product = class extends Model {
     return new resources.Manufacturer({
       client: this._client,
       filter: (manufacturer) => {
-        return this.related.manufacturer.indexOf(manufacturer.id) > -1;
+        return this.related.manufacturer == manufacturer.id;
       },
     });
   }
