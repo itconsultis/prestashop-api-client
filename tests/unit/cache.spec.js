@@ -12,13 +12,13 @@ describe('lru', () => {
       expect(lru.instance()).to.be.an.instanceof(LRUCache);
     });
 
-    it('return a named LRUCache instance', () => {
+    it('returns a named LRUCache instance', () => {
       let cache1 = lru.instance('foo');
       let cache2 = lru.instance('bar');
       expect(cache1).not.to.equal(cache2);
     });
 
-    it('returns the same LRUCache instance on a single namespace', () => {
+    it('deterministically returns the same LRUCache instance on the same namespace', () => {
       let cache1 = lru.instance('foo');
       let cache2 = lru.instance('foo');
       expect(cache1).to.equal(cache2);  
@@ -37,6 +37,9 @@ describe('lru', () => {
 
       cache1.set('scooby', 'doo');
       cache2.set('shaggy', 'doo');
+
+      expect(cache1.length).to.be.ok;
+      expect(cache2.length).to.be.ok;
 
       lru.flush();
 
