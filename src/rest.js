@@ -79,8 +79,7 @@ export const Client = class {
   /**
    * Return a Prestashop API language id
    * @property
-   * @param void
-   * @return {Number}
+   * @type {Number}
    */
   get language () {
     let opts = this.options;
@@ -189,6 +188,15 @@ export const Resource = resources.Resource = class {
   }
 
   /**
+   * Return a PrestaShop language id
+   * @property
+   * @type {Number}
+   */
+  get language () {
+    return this.client.language;
+  }
+
+  /**
    * Resolve an array of Model instances
    * @async Promise
    * @param void
@@ -261,20 +269,6 @@ export const Resource = resources.Resource = class {
    */
   parseModelProperties (xml) {
     throw new NotImplemented();
-  }
-
-}
-
-resources.Languages = class extends Resource {
-
-  /**
-   * @inheritdoc
-   */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/languages',  
-    };
   }
 
 }
