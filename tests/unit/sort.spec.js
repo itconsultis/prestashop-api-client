@@ -14,13 +14,14 @@ describe('sort', () => {
     });
 
     it('comparator sorts in ascending order', () => {
-      let values = [{prop: 1}, {prop: 2}];
+      let values = [{prop: 3}, {prop: 1}, {prop: 2}];
       let evaluate = value => value.prop;
       let comparator = sort.ascending(evaluate);
       let sorted = values.sort(comparator);
 
       expect(sorted[0].prop).to.equal(1);
       expect(sorted[1].prop).to.equal(2);
+      expect(sorted[2].prop).to.equal(3);
     });
   });
 
@@ -35,13 +36,14 @@ describe('sort', () => {
     });
 
     it('comparator sorts in descending order', () => {
-      let values = [{prop: 1}, {prop: 2}];
+      let values = [{prop: 3}, {prop: 1}, {prop: 2}];
       let evaluate = value => value.prop;
       let comparator = sort.descending(evaluate);
       let sorted = values.sort(comparator);
 
-      expect(sorted[0].prop).to.equal(2);
-      expect(sorted[1].prop).to.equal(1);
+      expect(sorted[0].prop).to.equal(3);
+      expect(sorted[1].prop).to.equal(2);
+      expect(sorted[2].prop).to.equal(1);
     });
   });
 });
