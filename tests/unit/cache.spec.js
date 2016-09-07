@@ -1,4 +1,4 @@
-import lru from '../../dist/lru';
+import lru from '../../src/lru';
 import LRUCache from 'lru-cache';
 
 describe('lru', () => {

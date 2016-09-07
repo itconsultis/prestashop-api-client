@@ -62,10 +62,10 @@ export const Model = models.Model = class {
   set (...args) {
     let arity = args.length;
     let mutators = this.mutators();
-    let raw = v => v;
+    let defaults = [v=>v];
 
     let assign = (value, prop) => {
-      let [set] = mutators[prop] || [raw];
+      let [set] = mutators[prop] || defaults;
       this[prop] = set(value);
     };
 
@@ -173,3 +173,4 @@ export const Manufacturer = models.Manufacturer = class extends Model {
 export const ProductOptionValue = models.ProductOptionValue = class extends Model {
   // implement me  
 }
+

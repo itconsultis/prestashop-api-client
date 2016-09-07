@@ -1,4 +1,4 @@
-import { Client } from '../../../dist/rest';
+import { Client } from '../../../src/rest';
 const P = Promise;
 const error = new Error();
 const pass = () => P.resolve();

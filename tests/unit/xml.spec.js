@@ -1,4 +1,4 @@
-import { parse } from '../../dist/xml';
+import { parse } from '../../src/xml';
 
 describe('xml', () => {
 
@@ -47,7 +47,7 @@ describe('xml', () => {
 
   describe('.parse.combination', () => {
     describe('.properties()', () => {
-      it('parse Combination properties', () => {
+      it('parses Combination properties', () => {
         let xml = fixture('combination-47.xml');
 
         return parse.combination.properties(xml)

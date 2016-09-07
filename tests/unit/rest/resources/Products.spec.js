@@ -1,5 +1,5 @@
-import { resources } from '../../../../dist/rest';
-import { Product } from '../../../../dist/models';
+import { resources } from '../../../../src/rest';
+import { Product } from '../../../../src/models';
 
 const { Products } = resources;
 const P = Promise;
@@ -13,8 +13,8 @@ describe('rest.resources.Products', () => {
       let client = {get: stub()};
       let resource = new Products({client: client});
 
-      let xml = fixture('product-8.xml');
-      let response = {ok: true, text: stub().returns(xml)};
+      let text = P.resolve(fixture('product-8.xml'));
+      let response = {ok: true, text: stub().returns(text)};
 
       client.get.withArgs('/products/8').returns(P.resolve(response));
 

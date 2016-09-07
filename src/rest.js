@@ -2,7 +2,7 @@ import path from 'path';
 import lang from './lang';
 import { each } from 'lodash';
 import querystring from './querystring';
-import { NotImplemented } from './exceptions';
+import { NotImplemented, InvalidArgument, UnexpectedValue } from './exceptions';
 import { parse } from './xml';
 import models from './models';
 import { coerce } from './lang';
@@ -104,7 +104,7 @@ export const Client = class {
     let url = this.url(uri, options.query);
     let cachekey = `${this.options.language}:${url}`;
     let response = this.cache.get(cachekey);
-console.log(url);
+
     if (response) {
       return P.resolve(response);
     }
@@ -128,7 +128,7 @@ console.log(url);
    * @param {String}
    */
   url (uri, query={}) {
-    let proxy = this.options.proxy;
+    let {proxy} = this.options;
     let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
@@ -146,7 +146,7 @@ console.log(url);
    */
   validateResponse (response) {
     if (!response.ok) {
-      throw new Error('got non-2XX HTTP response status');
+      throw new UnexpectedValue('got non-2XX HTTP response');
     }
   }
 
@@ -166,7 +166,7 @@ console.log(url);
     let constructor = dict[key];
 
     if (!constructor) {
-      throw new Error(`root resource not found: "${key}"`);
+      throw new InvalidArgument(`invalid root resource: "${key}"`);
     }
 
     return new constructor({...options, client: this});
@@ -235,7 +235,6 @@ export const Resource = resources.Resource = class {
       if (filter) {
         models = models.filter(filter);
       }
-
       if (sort) {
         models = models.sort(sort);
       }

@@ -1,4 +1,4 @@
-import querystring from '../../dist/querystring';
+import querystring from '../../src/querystring';
 
 describe('querystring', () => {
   describe('.stringify()', () => {
