@@ -2,14 +2,18 @@ import LRU from 'lru-cache';
 
 let caches;
 
+const init = () => {
+  if (!caches) {
+    caches = new Map();
+  }
+};
+
 /**
  * @param {String} ns
  * @return {LRU}
  */
 export const instance = (ns='default') => {
-  if (!caches) {
-     caches = new Map();
-  }
+  init();
 
   if (!caches.has(ns)) {
     caches.set(ns, new LRU({
@@ -26,9 +30,7 @@ export const instance = (ns='default') => {
  * @return void
  */
 export const flush = () => {
-  if (!caches) {
-     caches = new Map();
-  }
+  init();
 
   for (let [ns, cache] of caches.entries()) {
     cache.reset();
