@@ -17,8 +17,8 @@ export const instance = (ns='default') => {
 
   if (!caches.has(ns)) {
     caches.set(ns, new LRU({
-      max: 100,
-      maxAge: 900 * 1000,
+      max: 256,
+      maxAge: 15 * 60 * 1000, // 15 minutes
     }));
   }
 
