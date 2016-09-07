@@ -14,7 +14,6 @@
   "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
-    "pretest": ".npm/scripts/build",
     "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit tests/sandbox",
     "start": "./nodemon --ignore ./dist -x 'npm test || true'",
     "prepublish": "npm test"
