@@ -15,7 +15,7 @@
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
     "pretest": ".npm/scripts/build",
-    "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit",
+    "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit tests/sandbox",
     "start": "./nodemon --ignore ./dist -x 'npm test || true'",
     "prepublish": "npm test"
   },
@@ -39,6 +39,7 @@
     "eslint": "^3.4.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
+    "node-fetch": "^1.6.0",
     "nodemon": "^1.10.2",
     "sinon": "^1.17.5"
   }
