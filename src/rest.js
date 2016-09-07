@@ -102,7 +102,8 @@ export const Client = class {
    */
   get (uri, options={}) {
     let url = this.url(uri, options.query);
-    let response = this.cache.get(url);
+    let cachekey = `${this.language}:${url}`;
+    let response = this.cache.get(cachekey);
 
     if (response) {
       return P.resolve(response);
@@ -116,7 +117,7 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
-      this.cache.set(url, response);
+      this.cache.set(cachekey, response);
       return response;
     });
   }
