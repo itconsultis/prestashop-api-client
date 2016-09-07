@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+<combination>
+    <id><![CDATA[47]]></id>
+    <id_product xlink:href="http://havana.it-consultis.net/api/products/8"><![CDATA[8]]></id_product>
+    <location></location>
+    <ean13></ean13>
+    <upc></upc>
+    <quantity><![CDATA[1]]></quantity>
+    <reference><![CDATA[001]]></reference>
+    <supplier_reference></supplier_reference>
+    <wholesale_price><![CDATA[0.000000]]></wholesale_price>
+    <price><![CDATA[0.000000]]></price>
+    <ecotax><![CDATA[0.000000]]></ecotax>
+    <weight><![CDATA[0.000000]]></weight>
+    <unit_price_impact><![CDATA[0.000000]]></unit_price_impact>
+    <minimal_quantity><![CDATA[1]]></minimal_quantity>
+    <default_on></default_on>
+    <available_date><![CDATA[0000-00-00]]></available_date>
+    <associations>
+        <product_option_values nodeType="product_option_value" api="product_option_values">
+            <product_option_value xlink:href="http://havana.it-consultis.net/api/product_option_values/26">
+            <id><![CDATA[26]]></id>
+            </product_option_value>
+        </product_option_values>
+        <images nodeType="image" api="images/products"/>
+    </associations>
+</combination>
+</prestashop>
+

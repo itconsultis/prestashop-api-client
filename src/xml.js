@@ -26,6 +26,11 @@ export const parse = xml.parse = (xml) => {
 
 parse.product = {};
 
+/**
+ * @async Promise
+ * @param {String} xml
+ * @return {Object}
+ */
 parse.product.properties = (xml, language=1) => {
   return parse(xml)
 
@@ -54,7 +59,11 @@ parse.product.properties = (xml, language=1) => {
   });
 };
 
-
+/**
+ * @async Promise
+ * @param {String} xml
+ * @return {Array}
+ */
 parse.product.ids = (xml, language=1) => {
   return parse(xml)
 
@@ -66,8 +75,56 @@ parse.product.ids = (xml, language=1) => {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+parse.combination = {};
+
+/**
+ * @async Promise
+ * @param {String} xml
+ * @return {Object}
+ */
+parse.combination.properties = (xml) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let base = obj.prestashop.combination[0];
+    let assocs = base.associations[0];
+    let povs = assocs.product_option_values;
+
+    return {
+      'id': base.id[0].trim(),
+      'id_product': base.id_product[0]._.trim(),
+      'location': base.location[0].trim(),
+      'ean13': base.ean13[0].trim(),
+      'upc': base.upc[0].trim(),
+      'quantity': base.quantity[0].trim(),
+      'reference': base.reference[0].trim(),
+      'supplier_reference': base.supplier_reference[0].trim(),
+      'wholesale_price': base.wholesale_price[0].trim(),
+      'price': base.price[0].trim(),
+      'ecotax': base.ecotax[0].trim(),
+      'weight': base.weight[0].trim(),
+      'unit_price_impact': base.unit_price_impact[0].trim(),
+      'minimal_quantity': base.minimal_quantity[0].trim(),
+      'default_on': base.default_on[0].trim(),
+      'available_date': base.available_date[0].trim(),
+      'related': {
+        'product_option_values': povs.map((pov) => {
+          return integer(pov.product_option_value[0].id[0].trim());
+        }),
+      },
+    };
+  })
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 parse.image = {};
 
+/**
+ * @async Promise
+ * @param {String} xml
+ * @return {Object}
+ */
 parse.image.properties = (xml) => {
   return parse(xml)
 
@@ -82,3 +139,4 @@ parse.image.properties = (xml) => {
     });
   })
 };
+

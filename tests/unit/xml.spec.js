@@ -42,8 +42,42 @@ describe('xml', () => {
         });
       });
     });
+
   });
 
+  describe('.parse.combination', () => {
+    describe('.properties()', () => {
+      it('parse Combination properties', () => {
+        let xml = fixture('combination-47.xml');
+
+        return parse.combination.properties(xml)
+
+        .then((props) => {
+          let floatzero = 0.000000;
+
+          expect(Number(props.id)).to.equal(47);
+          expect(Number(props.id_product)).to.equal(8);
+          expect(props.location).to.equal('');
+          expect(props.ean13).to.equal('');
+          expect(props.upc).to.equal('');
+          expect(Number(props.quantity)).to.equal(1);
+          expect(props.reference).to.equal('001');
+          expect(props.supplier_reference).to.equal('');
+          expect(Number(props.wholesale_price)).to.equal(floatzero);
+          expect(Number(props.price)).to.equal(floatzero);
+          expect(Number(props.ecotax)).to.equal(floatzero);
+          expect(Number(props.weight)).to.equal(floatzero);
+          expect(Number(props.unit_price_impact)).to.equal(floatzero);
+          expect(Number(props.minimal_quantity)).to.equal(1);
+          expect(props.default_on).to.equal('');
+          expect(props.available_date).to.equal('0000-00-00');
+          expect(props.related.product_option_values).to.be.an.instanceof(Array);
+          expect(props.related.product_option_values.length).to.equal(1);
+          expect(props.related.product_option_values).to.include(26);
+        });
+      });
+    });
+  });
 
 
 });
