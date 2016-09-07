@@ -4,6 +4,7 @@ import querystring from './querystring';
 import { resources } from './rest';
 import { each } from 'lodash';
 import { NotImplemented } from './exceptions';
+import sort from './sort';
 
 const P = Promise;
 const { bool, integer, number, string } = lang.coerce;
@@ -137,10 +138,26 @@ export const Image = models.Image = class extends Model {
 }
 
 export const Combination = models.Combination = class extends Model {
-  // implement me
+
+  /**
+   * Return a rest.Resource that provides access to related ProductOptionValues
+   * @param void
+   * @return {rest.resources.ProductOptionvalues}
+   */
+  product_option_values () {
+    return new resources.ProductOptionValues({
+      client: this._client,
+      filter: (pov) => {
+        return this.related.product_option_values.indexOf(pov.id) > -1;
+      }
+    });
+  }
 }
 
 export const Manufacturer = models.Manufacturer = class extends Model {
   // implement me
 }
 
+export const ProductOptionValue = models.ProductOptionValue = class extends Model {
+  // implement me  
+}

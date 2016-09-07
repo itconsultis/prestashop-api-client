@@ -70,14 +70,62 @@ describe('rest.Client', () => {
       .catch(pass);
     });
 
+    it('caches responses', () => {
+      let fetch = stub();
+      let response = {ok: true};
+      let promise = P.resolve(response);
+      let cache = {get: stub(), set: stub()};
+
+      let client = new Client({
+        proxy: {scheme: 'https', host: 'api.local:3000', root: '/api'},
+        fetch: {algo: fetch},
+        cache: cache,
+      });
+
+      cache.get.withArgs('https://api.local:3000/api/foo/bar')
+               .onCall(0)
+               .returns(null);
+
+      cache.get.withArgs('https://api.local:3000/api/foo/bar')
+               .onCall(1)
+               .returns(response);
+
+      fetch.withArgs(match.string, match.object).returns(promise);
+
+      return client.get('/foo/bar')
+
+      .then((res) => {
+        expect(res).to.equal(response);
+        expect(cache.get.calledOnce).to.be.ok;
+        expect(cache.set.calledOnce).to.be.ok;
+     
+        return client.get('/foo/bar'); 
+      })
+
+      .then((res) => {
+        expect(res).to.equal(response);
+        expect(cache.get.calledTwice).to.be.ok;
+        expect(cache.set.calledOnce).to.be.ok;
+      })
+    });
+
   });
 
   describe('root resource access', () => {
     let client = new Client();
 
     describe('#resource()', () => {
-      it('returns a Products resource on key "products"', () => {
+      it('returns Products resource on key "products"', () => {
         expect(client.resource('products')).to.be.ok;
+      });
+      it('returns Combinations resource on key "combinations"', () => {
+        expect(client.resource('combinations')).to.be.ok;
+      });
+      it('returns Manufacturers resource on key "manufacturers"', () => {
+        expect(client.resource('manufacturers')).to.be.ok;
+      });
+      it('returns Images resource on key "images"', () => {
+        expect(client.resource('images')).to.be.ok;
       });
     })
   });
