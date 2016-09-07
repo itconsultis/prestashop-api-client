@@ -104,7 +104,7 @@ export const Client = class {
     let url = this.url(uri, options.query);
     let cachekey = `${this.options.language}:${url}`;
     let response = this.cache.get(cachekey);
-
+console.log(url);
     if (response) {
       return P.resolve(response);
     }
@@ -226,10 +226,8 @@ export const Resource = resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => {
-      let xml = response.text();
-      return this.parseModelIds(xml);
-    })
+    .then((response) => response.text())
+    .then((xml) => this.parseModelIds(xml))
     .then((ids) => this.createModels(ids))
     .then((models) => {
       let {sort, filter} = this.options;
@@ -263,7 +261,8 @@ export const Resource = resources.Resource = class {
    */
   get (id) {
     return this.client.get(`${this.options.root}/${id}`)
-    .then((response) => this.parseModelProperties(response.text()))
+    .then((response) => response.text())
+    .then((xml) => this.parseModelProperties(xml))
     .then((props) => this.createModel(props));
   }
 
@@ -284,7 +283,7 @@ export const Resource = resources.Resource = class {
    */
   createModel (props) {
     let constructor = this.options.model;
-    return new constructor({props: props});
+    return new constructor({client: this, props: props});
   }
 
   /**
@@ -357,7 +356,8 @@ resources.Images = class extends Resource {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => this.parseImageProperties(response.text()))
+    .then((response) => response.text())
+    .then((xml) => this.parseImageProperties(xml))
     .then((propsets) => propsets.map((props) => this.createModel(props)));
   }
 

@@ -71,7 +71,8 @@ describe('rest.Client', () => {
     });
 
     it('caches responses', () => {
-      let response = {ok: true, text: stub().returns(fixture('products.xml'))};
+      let text = P.resolve(fixture('products.xml'));
+      let response = {ok: true, text: stub().returns(text)};
       let fetch = stub().returns(P.resolve(response));
       let cache = {get: stub(), set: stub()};
 

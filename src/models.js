@@ -98,7 +98,7 @@ export const Product = models.Product = class extends Model {
    * @return {rest.resources.Combinations}
    */
   manufacturer () {
-    return new resources.Manufacturer({
+    return new resources.Manufacturers({
       client: this._client,
       filter: (manufacturer) => {
         return this.related.manufacturer == manufacturer.id;
