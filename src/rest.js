@@ -6,6 +6,7 @@ import { NotImplemented } from './exceptions';
 import { parse } from './xml';
 import models from './models';
 import { coerce } from './lang';
+import sort from './sort';
 
 const { integer } = coerce;
 const P = Promise;
@@ -177,7 +178,10 @@ export const Resource = resources.Resource = class {
       model: models.Model,
 
       // model list filter function
-      filter: model => true,
+      filter: null,
+
+      // model list sort function
+      sort: null,
     };
   }
 
@@ -208,7 +212,19 @@ export const Resource = resources.Resource = class {
     return this.client.get(this.options.root)
     .then((response) => this.parseModelIds(response.text()))
     .then((ids) => this.createModels(ids))
-    .then((models) => models.filter(this.options.filter));
+    .then((models) => {
+      let {sort, filter} = this.options;
+
+      if (filter) {
+        models = models.filter(filter);
+      }
+
+      if (sort) {
+        models = models.sort(sort);
+      }
+
+      return models;
+    });
   }
 
   /**
@@ -342,7 +358,6 @@ resources.Images = class extends Resource {
   parseImageProperties (xml) {
     return parse.image.properties(xml);
   }
-
 }
 
 
@@ -358,9 +373,7 @@ resources.Manufacturers = class extends Resource {
       model: models.Manufacturer,
     };
   }
-
 }
-
 
 resources.Combinations = class extends Resource {
 
@@ -374,7 +387,21 @@ resources.Combinations = class extends Resource {
       model: models.Combination,
     };
   }
+}
 
+resources.ProductOptionValues = class extends Resource {
+
+  /**
+   * @inheritdoc
+   */
+  defaults () {
+    return {
+      ...super.defaults(),
+      root: '/product_option_values',
+      model: models.ProductOptionValue,
+      sort: sort.ascending(model => model.position),
+    };
+  }
 }
 
 
