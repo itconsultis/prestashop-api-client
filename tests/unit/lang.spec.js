@@ -1,4 +1,4 @@
-import { empty } from '../../dist/lang';
+import { empty, tuples } from '../../dist/lang';
 import assert from 'assert';
 
 describe('lang', () => {
@@ -53,4 +53,43 @@ describe('lang', () => {
     });
   });
 
+
+  describe('.tuples()', () => {
+    it('converts an Object to an Array of two-element tuples', () => {
+      let input = {foo: 1, bar: 2};
+      let output = tuples(input);
+
+      expect(output).to.be.an.instanceof(Array);
+      expect(output.length).to.equal(2);
+
+      expect(output[0]).to.be.an.instanceof(Array);
+      expect(output[1]).to.be.an.instanceof(Array);
+
+      expect(output[0].length).to.equal(2);
+      expect(output[1].length).to.equal(2);
+      expect(output[0][0]).to.equal('foo');
+      expect(output[0][1]).to.equal(1);
+      expect(output[1][0]).to.equal('bar');
+      expect(output[1][1]).to.equal(2);
+    });
+
+    it('converts a Map to an Array of two-element tuples', () => {
+      let input = new Map([['foo', 1], ['bar', 2]]);
+      let output = tuples(input);
+
+      expect(output).to.be.an.instanceof(Array);
+      expect(output.length).to.equal(2);
+
+      expect(output[0]).to.be.an.instanceof(Array);
+      expect(output[1]).to.be.an.instanceof(Array);
+
+      expect(output[0].length).to.equal(2);
+      expect(output[1].length).to.equal(2);
+      expect(output[0][0]).to.equal('foo');
+      expect(output[0][1]).to.equal(1);
+      expect(output[1][0]).to.equal('bar');
+      expect(output[1][1]).to.equal(2);
+    });
+
+  });
 });

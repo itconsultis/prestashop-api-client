@@ -2,6 +2,40 @@ const lang = {};
 
 export default lang;
 
+export const coerce = lang.coerce = {};
+
+coerce.integer = (v) => parseInt(v, 10);
+coerce.string = String;
+coerce.bool = (v) => !empty(coerce.integer(v));
+coerce.number = Number;
+
+
+/**
+ * Given an Object or Map, return a list of two-element tuples. Each tuple is
+ * an Array that contains the key at index 0, and the input at index 1.
+ * @param {Object|Map} input
+ * @return {Array}
+ */
+export const tuples = lang.tuples = (input) => {
+  let output = []; 
+
+  if (input instanceof Map) {
+    for (let [k, v] of input.entries()) {
+      output.push([k, v]);
+    }
+  }
+  else {
+    for (let prop in input) {
+      if (input.hasOwnProperty(prop)) {
+        output.push([prop, input[prop]]);
+      }
+    }
+  }
+
+  return output;
+};
+
+
 /**
  * This works like PHP's empty() function. Behaviors:
  *  - return true if value is falsy
@@ -49,11 +83,4 @@ export const empty = lang.empty = (value) => {
   // default to false
   return false;
 };
-
-export const coerce = lang.coerce = {};
-
-coerce.integer = (v) => parseInt(v, 10);
-coerce.string = String;
-coerce.bool = (v) => !empty(coerce.integer(v));
-coerce.number = Number;
 
