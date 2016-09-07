@@ -71,39 +71,36 @@ describe('rest.Client', () => {
     });
 
     it('caches responses', () => {
-      let fetch = stub();
-      let response = {ok: true};
-      let promise = P.resolve(response);
+      let response = {ok: true, text: stub().returns(fixture('products.xml'))};
+      let fetch = stub().returns(P.resolve(response));
       let cache = {get: stub(), set: stub()};
 
       let client = new Client({
+        language: 'en',
         proxy: {scheme: 'https', host: 'api.local:3000', root: '/api'},
         fetch: {algo: fetch},
         cache: cache,
       });
 
-      cache.get.withArgs('https://api.local:3000/api/foo/bar')
-               .onCall(0)
-               .returns(null);
+      cache.get.onCall(0).returns(null);
+      cache.get.onCall(1).returns(response);
 
-      cache.get.withArgs('https://api.local:3000/api/foo/bar')
-               .onCall(1)
-               .returns(response);
-
-      fetch.withArgs(match.string, match.object).returns(promise);
+      fetch.withArgs(match.string, match.object).returns(P.resolve(response));
 
       return client.get('/foo/bar')
 
       .then((res) => {
         expect(res).to.equal(response);
+        expect(fetch.calledOnce).to.be.ok;
         expect(cache.get.calledOnce).to.be.ok;
         expect(cache.set.calledOnce).to.be.ok;
-     
+
         return client.get('/foo/bar'); 
       })
 
       .then((res) => {
         expect(res).to.equal(response);
+        expect(fetch.calledOnce).to.be.ok;
         expect(cache.get.calledTwice).to.be.ok;
         expect(cache.set.calledOnce).to.be.ok;
       })

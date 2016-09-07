@@ -102,7 +102,7 @@ export const Client = class {
    */
   get (uri, options={}) {
     let url = this.url(uri, options.query);
-    let cachekey = `${this.language}:${url}`;
+    let cachekey = `${this.options.language}:${url}`;
     let response = this.cache.get(cachekey);
 
     if (response) {
@@ -226,7 +226,10 @@ export const Resource = resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => this.parseModelIds(response.text()))
+    .then((response) => {
+      let xml = response.text();
+      return this.parseModelIds(xml);
+    })
     .then((ids) => this.createModels(ids))
     .then((models) => {
       let {sort, filter} = this.options;
