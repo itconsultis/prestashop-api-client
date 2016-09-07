@@ -108,6 +108,7 @@ parse.combination.properties = (xml) => {
       'default_on': base.default_on[0].trim(),
       'available_date': base.available_date[0].trim(),
       'related': {
+        'product': integer(base.id_product[0]._.trim()),
         'product_option_values': povs.map((pov) => {
           return integer(pov.product_option_value[0].id[0].trim());
         }),

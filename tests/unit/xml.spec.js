@@ -71,6 +71,7 @@ describe('xml', () => {
           expect(Number(props.minimal_quantity)).to.equal(1);
           expect(props.default_on).to.equal('');
           expect(props.available_date).to.equal('0000-00-00');
+          expect(props.related.product).to.equal(8);
           expect(props.related.product_option_values).to.be.an.instanceof(Array);
           expect(props.related.product_option_values.length).to.equal(1);
           expect(props.related.product_option_values).to.include(26);

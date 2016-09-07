@@ -140,6 +140,18 @@ export const Image = models.Image = class extends Model {
 export const Combination = models.Combination = class extends Model {
 
   /**
+   * Return a rest.Resource that provides access to the parent Product
+   * @param void
+   * @return {rest.resources.Products}
+   */
+  product () {
+    return new resources.Product({
+      client: this._client,
+      filter: (product) => this.related.product == product.id,
+    });
+  }
+
+  /**
    * Return a rest.Resource that provides access to related ProductOptionValues
    * @param void
    * @return {rest.resources.ProductOptionvalues}
