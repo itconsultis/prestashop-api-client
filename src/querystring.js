@@ -13,5 +13,11 @@ export default querystring;
  */
 export const stringify = querystring.stringify = (query) => {
   let encode = encodeURIComponent;
-  return map(query, (v, k) => `${encode(k)}=${encode(v)}`).join('&');
+  let serialize = (k, v) => `${encode(k)}=${encode(v)}`;
+
+  if (Array.isArray(query)) {
+    return map(query, (tuple) => serialize(...tuple)).join('&');
+  }
+
+  return map(query, (v, k) => serialize(k, v)).join('&');
 };

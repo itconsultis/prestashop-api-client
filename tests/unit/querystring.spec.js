@@ -9,5 +9,14 @@ describe('querystring', () => {
 
       expect(actual).to.equal(expected);
     });
+
+    it('converts a list of tuples to a query string', () => {
+      let input = [['foo', 'one'], ['bar', 2]];
+      let expected = 'foo=one&bar=2';
+      let actual = querystring.stringify(input);
+
+      expect(actual).to.equal(expected);
+    });
+
   });
 });

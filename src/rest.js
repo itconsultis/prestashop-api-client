@@ -131,6 +131,7 @@ export const Client = class {
     let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
+      query = lang.tuples(query).sort(sort.ascending(pair => pair[0]));
       fullpath += '?' + querystring.stringify(query);
     }
 
