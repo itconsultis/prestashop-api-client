@@ -7,6 +7,7 @@ import { parse } from './xml';
 import models from './models';
 import { coerce } from './lang';
 import sort from './sort';
+import lru from './lru';
 
 const { integer } = coerce;
 const P = Promise;
@@ -44,9 +45,10 @@ export const Client = class {
     return {
       language: 'en',
 
+      // these must match your PrestaShop backend languages
       languages: {
+        // ISO code => PrestaShop language id
         'en': 1,
-        'es': 2,
       },
 
       // API proxy configuration
@@ -55,6 +57,9 @@ export const Client = class {
         host: location.host,
         root: '/shop/api',
       },
+
+      // LRU instance; see https://www.npmjs.com/package/lru-cache
+      cache: lru.instance(),
 
       // Fetch-related options
       fetch: {
@@ -75,6 +80,7 @@ export const Client = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
+    this.cache = this.options.cache;
   }
 
   /**
@@ -96,6 +102,11 @@ export const Client = class {
    */
   get (uri, options={}) {
     let url = this.url(uri, options.query);
+    let response = this.cache.get(url);
+
+    if (response) {
+      return P.resolve(response);
+    }
 
     let fetchopts = {
       ...this.options.fetch.defaults, 
@@ -105,6 +116,7 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
+      this.cache.set(url, response);
       return response;
     });
   }
@@ -137,14 +149,16 @@ export const Client = class {
   }
 
   /**
-   *
-   *
+   * @param {String} key
+   * @param {Object} options
+   * @return {rest.Resource}
    */
-  resource (key) {
+  resource (key, options={}) {
     let dict = {
       products: resources.Products,
       manufacturers: resources.Manufacturers,
       combinations: resources.Combinations,
+      images: resources.Images,
     };
 
     let constructor = dict[key];
@@ -153,7 +167,7 @@ export const Client = class {
       throw new Error(`root resource not found: "${key}"`);
     }
 
-    return new constructor({client: this});
+    return new constructor({...options, client: this});
   }
 
 }
