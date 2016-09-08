@@ -47,7 +47,7 @@ export const Client = class {
         root: '/shop/api',
       },
 
-      // LRU instance; see https://www.npmjs.com/package/lru-cache
+      // LRUCache instance; see https://www.npmjs.com/package/lru-cache
       cache: lru.instance(),
 
       // Fetch-related options
@@ -77,6 +77,7 @@ export const Client = class {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
+    this.funnels = {};
   }
 
   /**
@@ -98,8 +99,8 @@ export const Client = class {
    */
   get (uri, options={}) {
     let url = this.url(uri, options.query);
-    let cachekey = `${this.options.language}:${url}`;
-    let response = this.cache.get(cachekey);
+    let key = `${this.options.language}:GET:${url}`;
+    let response = this.cache.get(key);
 
     if (response) {
       return P.resolve(response.clone());
@@ -113,13 +114,9 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
-      this.cache.set(cachekey, response);
+      this.cache.set(key, response);
       return response.clone();
     })
-    .catch((e) => {
-      console.log(`${e.message} on url ${url}`);
-      throw e;
-    });
   }
 
   /**
@@ -132,7 +129,7 @@ export const Client = class {
     let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
-      query = lang.tuples(query).sort(sort.ascending(pair => pair[0]));
+      query = lang.tuples(query).sort(sort.ascending(tuple => tuple[0]));
       fullpath += '?' + querystring.stringify(query);
     }
 
@@ -178,13 +175,14 @@ export const Client = class {
 export const resources = {};
 
 /**
- * a REST resource
+ * Resource is an HTTP-aware context that uses a Client to fetch XML payloads
+ * from the PrestaShop API. It converts XML payloads into Model instances.
  */
 export const Resource = resources.Resource = class {
 
   /**
    * Return the canonical constructor name. This is a workaround to a side
-   * effect of babel transpilation, which is that babel mangles class names.
+   * effect of Babel transpilation, which is that Babel mangles class names.
    * @property
    * @type {String}
    */
@@ -410,7 +408,6 @@ resources.StockAvailables = class extends Resource {
   static get name () {
     return 'StockAvailables';
   }
-
 }
 
 resources.ProductOptionValues = class extends Resource {

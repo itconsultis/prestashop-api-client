@@ -2,7 +2,7 @@ import { Client } from '../../../src/rest';
 const P = Promise;
 const error = new Error();
 const pass = () => P.resolve();
-const fail = () => expect.fail();
+const fail = () => P.reject();
 
 describe('rest.Client', () => {
 
@@ -54,7 +54,11 @@ describe('rest.Client', () => {
       fetch.withArgs(match.string, match.object).returns(promise);
 
       return client.get('/foo/bar')
-      .then((res) => expect(res).to.equal(response))
+
+      .then((res) => {
+        expect(fetch.calledOnce).to.be.ok;
+        expect(res).to.equal(response);
+      })
     });
 
     it('throws an Error on non-OK response', () => {
@@ -70,7 +74,7 @@ describe('rest.Client', () => {
       .catch(pass);
     });
 
-    xit('returns cloned response', () => {
+    it('returns cloned response', () => {
       let fetch = stub();
 
       let clone = {ok: true, clone: () => clone};

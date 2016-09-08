@@ -180,6 +180,7 @@ export const Combination = models.Combination = class extends Model {
 
   /**
    * Return a rest.Resource that provides access to the parent Product
+   * models.
    * @param void
    * @return {rest.resources.Products}
    */
@@ -191,7 +192,8 @@ export const Combination = models.Combination = class extends Model {
   }
 
   /**
-   * Return a rest.Resource that provides access to related ProductOptionValues
+   * Return a rest.Resource that provides access to related ProductOptionValue
+   * models.
    * @param void
    * @return {rest.resources.ProductOptionvalues}
    */
@@ -204,6 +206,12 @@ export const Combination = models.Combination = class extends Model {
     });
   }
 
+  /**
+   * Return a rest.Resource that provides access to related StockAvailable
+   * models.
+   * @param void
+   * @return {rest.resources.ProductOptionvalues}
+   */
   stock_availables () {
     return new resources.StockAvailables({
       client: this.options.client,
