@@ -1,5 +1,5 @@
-import { resources } from '../../../../dist/rest';
-import { Image } from '../../../../dist/models';
+import { resources } from '../../../../src/rest';
+import { Image } from '../../../../src/models';
 const { Images } = resources;
 const P = Promise;
 
@@ -15,8 +15,8 @@ describe('rest.resources.Images', () => {
         root: '/images/products/8',
       });
 
-      let xml = fixture('product-8-images.xml');
-      let response = {ok: true, text: stub().returns(xml)};
+      let text = P.resolve(fixture('product-8-images.xml'));
+      let response = {ok: true, text: stub().returns(text)};
 
       client.get.withArgs('/images/products/8').returns(P.resolve(response));
 

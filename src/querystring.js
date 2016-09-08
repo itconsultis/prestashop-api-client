@@ -5,7 +5,6 @@ const querystring = {};
 
 export default querystring;
 
-
 /**
  * Stringify a query per RFC 3986
  * @param {Object} query

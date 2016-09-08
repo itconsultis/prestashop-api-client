@@ -1,5 +1,5 @@
-import models from '../../../dist/models';
-import { resources } from '../../../dist/rest';
+import models from '../../../src/models';
+import { resources } from '../../../src/rest';
 const { Product } = models;
 
 describe('models.Product', () => {

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+    <manufacturer>
+        <id>
+            <![CDATA[1]]>
+        </id>
+        <active>
+            <![CDATA[1]]>
+        </active>
+        <link_rewrite notFilterable="true">
+            <![CDATA[fashion-manufacturer]]>
+        </link_rewrite>
+        <name>
+            <![CDATA[Fashion Manufacturer]]>
+        </name>
+        <date_add>
+            <![CDATA[2016-08-30 23:28:32]]>
+        </date_add>
+        <date_upd>
+            <![CDATA[2016-08-31 02:09:41]]>
+        </date_upd>
+        <description>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[]]>
+            </language>
+        </description>
+        <short_description>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[]]>
+            </language>
+        </short_description>
+        <meta_title>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[]]>
+            </language>
+        </meta_title>
+        <meta_description>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[]]>
+            </language>
+        </meta_description>
+        <meta_keywords>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[]]>
+            </language>
+        </meta_keywords>
+        <associations>
+            <addresses nodeType="address" api="addresses">
+                <address xlink:href="http://localhost/api/addresses/5">
+                    <id xlink:href="http://localhost/api/addresses/5">
+                        <![CDATA[5]]>
+                    </id>
+                </address>
+            </addresses>
+        </associations>
+    </manufacturer>
+</prestashop>

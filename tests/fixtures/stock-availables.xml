@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+    <stock_availables>
+        <stock_available id="53" xlink:href="http://localhost/api/stock_availables/53"/>
+        <stock_available id="54" xlink:href="http://localhost/api/stock_availables/54"/>
+        <stock_available id="55" xlink:href="http://localhost/api/stock_availables/55"/>
+        <stock_available id="56" xlink:href="http://localhost/api/stock_availables/56"/>
+        <stock_available id="57" xlink:href="http://localhost/api/stock_availables/57"/>
+        <stock_available id="58" xlink:href="http://localhost/api/stock_availables/58"/>
+        <stock_available id="59" xlink:href="http://localhost/api/stock_availables/59"/>
+        <stock_available id="60" xlink:href="http://localhost/api/stock_availables/60"/>
+        <stock_available id="61" xlink:href="http://localhost/api/stock_availables/61"/>
+        <stock_available id="62" xlink:href="http://localhost/api/stock_availables/62"/>
+        <stock_available id="63" xlink:href="http://localhost/api/stock_availables/63"/>
+        <stock_available id="64" xlink:href="http://localhost/api/stock_availables/64"/>
+        <stock_available id="65" xlink:href="http://localhost/api/stock_availables/65"/>
+        <stock_available id="66" xlink:href="http://localhost/api/stock_availables/66"/>
+        <stock_available id="67" xlink:href="http://localhost/api/stock_availables/67"/>
+        <stock_available id="68" xlink:href="http://localhost/api/stock_availables/68"/>
+        <stock_available id="69" xlink:href="http://localhost/api/stock_availables/69"/>
+        <stock_available id="70" xlink:href="http://localhost/api/stock_availables/70"/>
+        <stock_available id="71" xlink:href="http://localhost/api/stock_availables/71"/>
+        <stock_available id="72" xlink:href="http://localhost/api/stock_availables/72"/>
+        <stock_available id="73" xlink:href="http://localhost/api/stock_availables/73"/>
+        <stock_available id="74" xlink:href="http://localhost/api/stock_availables/74"/>
+        <stock_available id="75" xlink:href="http://localhost/api/stock_availables/75"/>
+        <stock_available id="76" xlink:href="http://localhost/api/stock_availables/76"/>
+        <stock_available id="77" xlink:href="http://localhost/api/stock_availables/77"/>
+        <stock_available id="78" xlink:href="http://localhost/api/stock_availables/78"/>
+        <stock_available id="79" xlink:href="http://localhost/api/stock_availables/79"/>
+        <stock_available id="80" xlink:href="http://localhost/api/stock_availables/80"/>
+        <stock_available id="81" xlink:href="http://localhost/api/stock_availables/81"/>
+        <stock_available id="82" xlink:href="http://localhost/api/stock_availables/82"/>
+        <stock_available id="83" xlink:href="http://localhost/api/stock_availables/83"/>
+        <stock_available id="84" xlink:href="http://localhost/api/stock_availables/84"/>
+        <stock_available id="85" xlink:href="http://localhost/api/stock_availables/85"/>
+        <stock_available id="86" xlink:href="http://localhost/api/stock_availables/86"/>
+        <stock_available id="87" xlink:href="http://localhost/api/stock_availables/87"/>
+        <stock_available id="88" xlink:href="http://localhost/api/stock_availables/88"/>
+        <stock_available id="89" xlink:href="http://localhost/api/stock_availables/89"/>
+        <stock_available id="90" xlink:href="http://localhost/api/stock_availables/90"/>
+    </stock_availables>
+</prestashop>

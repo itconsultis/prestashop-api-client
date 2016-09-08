@@ -1,4 +1,4 @@
-import { empty, tuples } from '../../dist/lang';
+import { empty, tuples } from '../../src/lang';
 import assert from 'assert';
 
 describe('lang', () => {

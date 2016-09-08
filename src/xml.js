@@ -1,5 +1,6 @@
 import xml2js from 'xml2js';
 import { coerce } from './lang';
+import clean from 'strip-bom';
 const { bool, number, integer, string } = coerce;
 const P = Promise;
 
@@ -16,9 +17,36 @@ export default xml;
  */
 export const parse = xml.parse = (xml) => {
   return new P((resolve, reject) => {
-    xml2js.parseString(xml, (err, result) => {
+    xml2js.parseString(clean(String(xml)), (err, result) => {
       err ? reject(err) : resolve(result);
     });
+  })
+
+  .catch((e) => {
+    console.log(String(xml));
+    throw e;
+  })
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+parse.model = {};
+
+/**
+ * Parse the supplied XML payload and return an array of model ids.
+ * @async Promise
+ * @param {String|Buffer} xml
+ * @param {String} api
+ * @param {String} nodetype
+ * @return {Array} 
+ */
+parse.model.ids = (xml, api, nodetype) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let list = obj.prestashop[api][0][nodetype];
+    return list.map((obj) => integer(obj.$.id));
   });
 };
 
@@ -50,26 +78,14 @@ parse.product.properties = (xml, language=1) => {
       'name': (names.filter(lang).pop()._||'').trim(),
       'description': (descs.filter(lang).pop()._||'').trim(),
       'description_short': (shortdescs.filter(lang).pop()._||'').trim(),
+      'price': base.price[0].trim(),
+      'available_for_order': base.available_for_order[0].trim(),
       'related': {
         'manufacturer': integer((base.id_manufacturer[0]||'').trim()),
         'combinations': combos.map(combo => integer(combo.id[0].trim())),
         'images': images.map(image => integer((image.id[0]||'').trim())),
       },
     };
-  });
-};
-
-/**
- * @async Promise
- * @param {String} xml
- * @return {Array}
- */
-parse.product.ids = (xml, language=1) => {
-  return parse(xml)
-
-  .then((obj) => {
-    let list = obj.prestashop.products[0].product;
-    return list.map((obj) => integer(obj.$.id));
   });
 };
 
@@ -108,6 +124,7 @@ parse.combination.properties = (xml) => {
       'default_on': base.default_on[0].trim(),
       'available_date': base.available_date[0].trim(),
       'related': {
+        'product': integer(base.id_product[0]._.trim()),
         'product_option_values': povs.map((pov) => {
           return integer(pov.product_option_value[0].id[0].trim());
         }),
@@ -137,6 +154,85 @@ parse.image.properties = (xml) => {
         'src': dec.$['xlink:href'],
       };
     });
+  })
+};
+
+////////////////////////////////////////////////////////////////////////////////
+parse.manufacturer = {};
+
+parse.manufacturer.properties = (xml, language=1) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let base = obj.prestashop.manufacturer[0];
+    let lang = (attr) => attr.$.id == language;
+    let descs = base.description[0].language;
+
+    return {
+      'id': base.id[0].trim(),
+      'active': base.active[0].trim(),
+      'name': base.name[0].trim(),
+      'description': (descs.filter(lang).pop()._||'').trim(),
+    };
+  })
+};
+
+
+parse.stock_available = {};
+
+parse.stock_available.ids = (xml, api, nodetype) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let list = obj.prestashop.stock_availables[0].stock_available;
+    return list.map((obj) => integer(obj.$.id));
+  })
+};
+
+parse.stock_available.properties = (xml, language=1) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let base = obj.prestashop.stock_available[0];
+    let {id_product_attribute} = base;
+
+    if (typeof id_product_attribute[0] === 'string') {
+      id_product_attribute = id_product_attribute[0].trim();
+    }
+    else {
+      id_product_attribute = id_product_attribute[0]._.trim();
+    }
+
+    return {
+      'id': base.id[0].trim(),
+      'id_product': base.id_product[0]._.trim(),
+      'id_product_attribute': id_product_attribute,
+      'id_shop': base.id_shop[0]._.trim(),
+      'id_shop_group': base.id_shop_group[0].trim(),
+      'quantity': base.quantity[0].trim(),
+      'depends_on_stock': base.depends_on_stock[0].trim(),
+      'out_of_stock': base.out_of_stock[0].trim(),
+    };
+  })
+};
+
+parse.product_option_value = {};
+
+parse.product_option_value.properties = (xml, language=1) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let base = obj.prestashop.product_option_value[0];
+    let names = base.name[0].language;
+    let lang = (attr) => attr.$.id == language;
+
+    return {
+      'id': base.id[0].trim(),
+      'id_attribute_group': base.id_attribute_group[0]._.trim(),
+      'color': base.color[0].trim(),
+      'position': base.position[0].trim(),
+      'name': (names.filter(lang).pop()._||'').trim(),
+    };
   })
 };
 

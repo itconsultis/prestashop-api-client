@@ -1,4 +1,4 @@
-import sort from '../../dist/sort';
+import sort from '../../src/sort';
 const noop = () => {};
 
 describe('sort', () => {

@@ -1,4 +1,4 @@
-import { parse } from '../../dist/xml';
+import { parse } from '../../src/xml';
 
 describe('xml', () => {
 
@@ -30,24 +30,11 @@ describe('xml', () => {
       });
     });
 
-    describe('.ids()', () => {
-      it('parses Product ids', () => {
-        let xml = fixture('products.xml');
-
-        return parse.product.ids(xml)
-
-        .then((ids) => {
-          expect(ids.length).to.equal(2);
-          expect(ids).to.include(8, 9);
-        });
-      });
-    });
-
   });
 
   describe('.parse.combination', () => {
     describe('.properties()', () => {
-      it('parse Combination properties', () => {
+      it('parses Combination properties', () => {
         let xml = fixture('combination-47.xml');
 
         return parse.combination.properties(xml)
@@ -71,6 +58,7 @@ describe('xml', () => {
           expect(Number(props.minimal_quantity)).to.equal(1);
           expect(props.default_on).to.equal('');
           expect(props.available_date).to.equal('0000-00-00');
+          expect(props.related.product).to.equal(8);
           expect(props.related.product_option_values).to.be.an.instanceof(Array);
           expect(props.related.product_option_values.length).to.equal(1);
           expect(props.related.product_option_values).to.include(26);
@@ -79,5 +67,58 @@ describe('xml', () => {
     });
   });
 
+  describe('.parse.manufacturer', () => {
+    describe('.properties()', () => {
+      it('parses Manufacturer properties', () => {
+        let xml = fixture('manufacturer-1.xml');
 
+        return parse.manufacturer.properties(xml)
+
+        .then((props) => {
+          expect(Number(props.id)).to.equal(1);
+          expect(Number(props.active)).to.equal(1);
+          expect(props.name).to.equal('Fashion Manufacturer');
+          expect(props.description).to.equal('');
+        });
+      });
+    });
+  });
+
+  describe('.parse.stock_available', () => {
+    describe('.properties()', () => {
+      it('parses StockAvailable properties', () => {
+        let xml = fixture('stock-available-80.xml');
+
+        return parse.stock_available.properties(xml)
+
+        .then((props) => {
+          expect(Number(props.id)).to.equal(80);
+          expect(Number(props.id_product)).to.equal(10);
+          expect(Number(props.id_product_attribute)).to.equal(0);
+          expect(Number(props.id_shop)).to.equal(1);
+          expect(Number(props.id_shop_group)).to.equal(0);
+          expect(Number(props.depends_on_stock)).to.equal(0);
+          expect(Number(props.out_of_stock)).to.equal(2);
+        });
+      });
+    });
+  });
+  
+
+  describe('.parse.product_option_value', () => {
+    describe('.properties', () => {
+      it('parses ProductOptionValue properties', () => {
+        let xml = fixture('product-option-values-25.xml');
+
+        return parse.product_option_value.properties(xml)
+
+        .then((props) => {
+          expect(Number(props.id)).to.equal(25);
+          expect(Number(props.id_attribute_group)).to.equal(4);
+          expect(Number(props.position)).to.equal(0);
+          expect(props.name).to.equal('1');
+        });
+      });
+    });
+  });
 });

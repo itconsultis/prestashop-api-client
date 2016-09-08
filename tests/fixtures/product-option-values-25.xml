@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
+    <product_option_value>
+        <id>
+            <![CDATA[25]]>
+        </id>
+        <id_attribute_group xlink:href="http://localhost/api/product_options/4">
+            <![CDATA[4]]>
+        </id_attribute_group>
+        <color></color>
+        <position>
+            <![CDATA[0]]>
+        </position>
+        <name>
+            <language id="1" xlink:href="http://localhost/api/languages/1">
+                <![CDATA[1]]>
+            </language>
+            <language id="2" xlink:href="http://localhost/api/languages/2">
+                <![CDATA[1]]>
+            </language>
+        </name>
+    </product_option_value>
+</prestashop>

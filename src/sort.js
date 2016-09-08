@@ -1,19 +1,21 @@
 const sort = {};
 
 /**
- * @param {Function} evaluate
+ * Return a sort comparator given a function that returns a sortable value.
+ * @param {Function} resolve
  * @return {Function}
  */
-export const ascending = sort.ascending = (evaluate) => {
-  return (a, b) => evaluate(a) - evaluate(b);
+export const ascending = sort.ascending = (resolve) => {
+  return (a, b) => resolve(a) - resolve(b);
 };
 
 /**
- * @param {Function} evaluate
+ * Return a sort comparator given a function that returns a sortable value.
+ * @param {Function} resolve
  * @return {Function}
  */
-export const descending = sort.descending = (evaluate) => {
-  return (a, b) => evaluate(b) - evaluate(a);
+export const descending = sort.descending = (resolve) => {
+  return (a, b) => resolve(b) - resolve(a);
 };
 
 export default sort;

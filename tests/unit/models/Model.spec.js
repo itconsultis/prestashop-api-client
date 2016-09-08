@@ -1,5 +1,5 @@
-import models from '../../../dist/models';
-import rest from '../../../dist/rest';
+import models from '../../../src/models';
+import rest from '../../../src/rest';
 
 const { Model } = models;
 

@@ -1,4 +1,4 @@
-import { resources } from '../../../../dist/rest';
+import { resources } from '../../../../src/rest';
 const { Resource } = resources;
 const P = Promise;
 const DummyModel = class {};
