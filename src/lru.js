@@ -38,4 +38,28 @@ export const flush = () => {
   }
 };
 
-export default { instance, flush };
+/**
+ * @param void
+ * @return {Object}
+ */
+export const dummy = () => {
+  let noop = () => {};
+
+  return {
+    length: 0,
+    itemCount: 0,
+    get: noop,
+    set: noop,
+    reset: noop,
+    peek: noop,
+    del: noop,
+    has: () => false,
+    forEach: noop,
+    rforEach: noop,
+    keys: () => [],
+    values: () => [],
+    dump: () => [],
+  };
+};
+
+export default { instance, flush, dummy };
