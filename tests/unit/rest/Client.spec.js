@@ -70,7 +70,7 @@ describe('rest.Client', () => {
       .catch(pass);
     });
 
-    it('returns cloned response', () => {
+    xit('returns cloned response', () => {
       let fetch = stub();
 
       let clone = {ok: true, clone: () => clone};
