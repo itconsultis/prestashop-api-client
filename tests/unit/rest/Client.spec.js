@@ -70,6 +70,24 @@ describe('rest.Client', () => {
       .catch(pass);
     });
 
+    it('returns cloned response', () => {
+      let fetch = stub();
+
+      let clone = {ok: true, clone: () => clone};
+      let response = {...clone, clone: stub().returns(clone)};
+      let client = new Client({fetch: {algo: fetch}});
+
+      fetch.returns(P.resolve(response));
+
+      return client.get('/foo/bar')
+
+      .then((res) => {
+        expect(fetch.calledOnce).to.be.ok;
+        expect(res).to.eql(clone);
+        expect(response.clone.calledOnce).to.be.ok;
+      });
+    });
+
     it('caches responses', () => {
       let text = P.resolve(fixture('products.xml'));
       let response = {ok: true, clone: () => response, text: stub().returns(text)};

@@ -113,8 +113,8 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
-      this.cache.set(cachekey, response.clone());
-      return response;
+      this.cache.set(cachekey, response);
+      return response.clone();
     })
     .catch((e) => {
       console.log(`${e.message} on url ${url}`);
