@@ -1,6 +1,5 @@
 import xml2js from 'xml2js';
 import { coerce } from './lang';
-import clean from 'strip-bom';
 const { bool, number, integer, string } = coerce;
 const P = Promise;
 
@@ -17,7 +16,7 @@ export default xml;
  */
 export const parse = xml.parse = (xml) => {
   return new P((resolve, reject) => {
-    xml2js.parseString(clean(String(xml)), (err, result) => {
+    xml2js.parseString(String(xml), (err, result) => {
       err ? reject(err) : resolve(result);
     });
   })
