@@ -102,7 +102,7 @@ export const Client = class {
     let response = this.cache.get(cachekey);
 
     if (response) {
-      return P.resolve(response);
+      return P.resolve(response.clone());
     }
 
     let fetchopts = {
@@ -113,7 +113,7 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
-      this.cache.set(cachekey, response);
+      this.cache.set(cachekey, response.clone());
       return response;
     })
     .catch((e) => {
