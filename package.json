@@ -1,6 +1,6 @@
 {
   "name": "prestashop-api-client",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "PrestaShop API client",
   "homepage": "https://github.com/itconsultis/prestashop-api-client",
   "bugs": "https://github.com/itconsultis/prestashop-api-client/issues",
@@ -17,7 +17,7 @@
     "test": ".npm/scripts/test",
     "coverage": "./istanbul cover npm test",
     "start": "./nodemon --ignore ./dist -x 'npm test || true'",
-    "prepublish": "npm test"
+    "prepublish": "npm test && .npm/scripts/build"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
@@ -33,6 +33,7 @@
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.5",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-istanbul": "^2.0.1",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
