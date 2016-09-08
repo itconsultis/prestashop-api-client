@@ -1,4 +1,5 @@
-tashop xmlns:xlink="http://www.w3.org/1999/xlink">
+<?xml version="1.0" encoding="UTF-8"?>
+<prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
     <manufacturer>
         <id>
             <![CDATA[1]]>
@@ -10,7 +11,7 @@ tashop xmlns:xlink="http://www.w3.org/1999/xlink">
             <![CDATA[fashion-manufacturer]]>
         </link_rewrite>
         <name>
-            <![CDATA[manufacturer-1-name]]>
+            <![CDATA[Fashion Manufacturer]]>
         </name>
         <date_add>
             <![CDATA[2016-08-30 23:28:32]]>
@@ -20,42 +21,42 @@ tashop xmlns:xlink="http://www.w3.org/1999/xlink">
         </date_upd>
         <description>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[manufacturer-1-description-en]]>
+                <![CDATA[]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[manufacturer-1-description-es]]>
+                <![CDATA[]]>
             </language>
         </description>
         <short_description>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[manufacturer-1-short-description-en]]>
+                <![CDATA[]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[manufacturer-1-short-description-es]]>
+                <![CDATA[]]>
             </language>
         </short_description>
         <meta_title>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[manufacturer-1-meta-title-en]]>
+                <![CDATA[]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[manufacturer-1-meta-title-es]]>
+                <![CDATA[]]>
             </language>
         </meta_title>
         <meta_description>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[manufacturer-1-meta-description-en]]>
+                <![CDATA[]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[manufacturer-1-meta-description-es]]>
+                <![CDATA[]]>
             </language>
         </meta_description>
         <meta_keywords>
             <language id="1" xlink:href="http://localhost/api/languages/1">
-                <![CDATA[manufacturer-1-meta-keywords-en]]>
+                <![CDATA[]]>
             </language>
             <language id="2" xlink:href="http://localhost/api/languages/2">
-                <![CDATA[manufacturer-1-meta-keywords-es]]>
+                <![CDATA[]]>
             </language>
         </meta_keywords>
         <associations>

@@ -14,7 +14,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "postinstall": ".npm/scripts/postinstall",
-    "test": "./mocha --compilers js:babel-core/register -r tests/bootstrap.js --recursive tests/unit tests/sandbox",
+    "test": "./mocha --compilers js:babel-core/register --timeout 5000 -r tests/bootstrap.js --recursive tests/unit tests/sandbox",
     "start": "./nodemon --ignore ./dist -x 'npm test || true'",
     "prepublish": "npm test"
   },
@@ -23,6 +23,7 @@
   "dependencies": {
     "lodash": "^3.10.1",
     "lru-cache": "^4.0.1",
+    "snake-case": "^2.1.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@
 <prestashop xmlns:xlink="http://www.w3.org/1999/xlink">
 <combination>
     <id><![CDATA[47]]></id>
-    <id_product xlink:href="http://havana.it-consultis.net/api/products/8"><![CDATA[8]]></id_product>
+    <id_product xlink:href="http://localhost/api/products/8"><![CDATA[8]]></id_product>
     <location></location>
     <ean13></ean13>
     <upc></upc>
@@ -19,7 +19,7 @@
     <available_date><![CDATA[0000-00-00]]></available_date>
     <associations>
         <product_option_values nodeType="product_option_value" api="product_option_values">
-            <product_option_value xlink:href="http://havana.it-consultis.net/api/product_option_values/26">
+            <product_option_value xlink:href="http://localhost/api/product_option_values/26">
             <id><![CDATA[26]]></id>
             </product_option_value>
         </product_option_values>

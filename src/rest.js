@@ -8,6 +8,7 @@ import models from './models';
 import { coerce } from './lang';
 import sort from './sort';
 import lru from './lru';
+import string from './string';
 
 const { integer } = coerce;
 const P = Promise;
@@ -18,14 +19,6 @@ const P = Promise;
  * HTTP client
  */
 export const Client = class {
-
-  /**
-   * @param void
-   * @return {rest.Client}
-   */
-  static instance (options={}) {
-    return new this(options);
-  }
 
   /**
    * Return instance configuration defaults
@@ -119,6 +112,10 @@ export const Client = class {
       this.validateResponse(response);
       this.cache.set(cachekey, response);
       return response;
+    })
+    .catch((e) => {
+      console.log(`${e.message} on url ${url}`);
+      throw e;
     });
   }
 
@@ -183,15 +180,35 @@ export const resources = {};
 export const Resource = resources.Resource = class {
 
   /**
+   * Return the canonical constructor name. This is a workaround to a side
+   * effect of babel transpilation, which is that babel mangles class names.
+   * @property
+   * @type {String}
+   */
+  static get name () {
+    return 'Resource';
+  }
+
+  /**
    * Return instance configuration defaults
    * @param void
    * @return {Object}
    */
   defaults () {
+    let classname = this.constructor.name;
+    let api = string.snake(classname);
+    let nodetype = api.slice(0, -1);
+    let root = `/${api}`;
+    let modelname = classname.slice(0, -1);
+
+    //console.log({api, nodetype, root, modelname});
+
     return {
-      client: Client.instance(),
-      root: '/',
-      model: models.Model,
+      client: null,
+      model: models[modelname],
+      root: root,
+      api: api,
+      nodetype: nodetype,
 
       // model list filter function
       filter: null,
@@ -281,8 +298,13 @@ export const Resource = resources.Resource = class {
    * @return {Model}
    */
   createModel (props) {
-    let constructor = this.options.model;
-    return new constructor({client: this, props: props});
+    let {model: constructor} = this.options;
+
+    return new constructor({
+      client: this.client,
+      resource: this,
+      props: props,
+    });
   }
 
   /**
@@ -293,7 +315,8 @@ export const Resource = resources.Resource = class {
    * @return {Array}
    */
   parseModelIds (xml) {
-    throw new NotImplemented();
+    let {api, nodetype} = this.options;
+    return parse.model.ids(xml, api, nodetype);
   }
 
   /**
@@ -303,7 +326,17 @@ export const Resource = resources.Resource = class {
    * @return {Object}
    */
   parseModelProperties (xml) {
-    throw new NotImplemented();
+    let nodetype = this.options.nodetype;
+    let ns = parse[nodetype];
+
+    if (!ns) {
+      throw new UnexpectedValue(`parser namespace not found on node type ${nodetype}`);
+    }
+    if (!ns.properties) {
+      throw new UnexpectedValue(`model properties parser not found on node type ${nodetype}`);
+    }
+
+    return parse[nodetype].properties(xml, this.language);
   }
 
 }
@@ -311,43 +344,17 @@ export const Resource = resources.Resource = class {
 resources.Products = class extends Resource {
 
   /**
-   * @inheritdoc
+   * inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/products',
-      model: models.Product,
-    };
+  static get name () {
+    return 'Products';
   }
-
-  /**
-   * @inheritdoc
-   */
-  parseModelIds (xml) {
-    return parse.product.ids(xml);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  parseModelProperties (xml) {
-    return parse.product.properties(xml);
-  }
-
 }
 
 resources.Images = class extends Resource {
 
-  /**
-   * @inheritdoc
-   */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/images',
-      model: models.Image,
-    };
+  static get name () {
+    return 'Images';
   }
 
   /**
@@ -358,13 +365,6 @@ resources.Images = class extends Resource {
     .then((response) => response.text())
     .then((xml) => this.parseImageProperties(xml))
     .then((propsets) => propsets.map((props) => this.createModel(props)));
-  }
-
-  /**
-   * @inheritdoc
-   */
-  get (id) {
-    throw new NotImplemented();
   }
 
   /**
@@ -384,12 +384,8 @@ resources.Manufacturers = class extends Resource {
   /**
    * @inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/manufacturers',
-      model: models.Manufacturer,
-    };
+  static get name () {
+    return 'Manufacturers';
   }
 }
 
@@ -398,16 +394,30 @@ resources.Combinations = class extends Resource {
   /**
    * @inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/combinations',
-      model: models.Combination,
-    };
+  static get name () {
+    return 'Combinations';
   }
 }
 
+resources.StockAvailables = class extends Resource {
+
+  /**
+   * @inheritdoc
+   */
+  static get name () {
+    return 'StockAvailables';
+  }
+
+}
+
 resources.ProductOptionValues = class extends Resource {
+
+  /**
+   * inheritdoc
+   */
+  static get name () {
+    return 'ProductOptionValues';
+  }
 
   /**
    * @inheritdoc
@@ -415,8 +425,6 @@ resources.ProductOptionValues = class extends Resource {
   defaults () {
     return {
       ...super.defaults(),
-      root: '/product_option_values',
-      model: models.ProductOptionValue,
       sort: sort.ascending(model => model.position),
     };
   }

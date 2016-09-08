@@ -24,7 +24,13 @@ export const Model = models.Model = class {
    */
   defaults () {
     return {
+      // the resource that created the model
+      resource: null,
+
+      // rest.Client instance
       client: null,
+
+      // model properties
       props: {},
     };
   }
@@ -37,7 +43,9 @@ export const Model = models.Model = class {
   mutators () {
     return {
       // property: [set-mutator, get-mutator],
-      id: [integer]
+      id: [integer],
+      quantity: [integer],
+      position: [integer],
     };
   }
 
@@ -45,12 +53,13 @@ export const Model = models.Model = class {
    * @param {Object} attrs - initial model attributes
    */
   constructor (options={}) {
-    let defaults = this.defaults();
+    this.options = {
+      ...this.defaults(),
+      ...options,
+    };
+
     let props = options.props || {};
-
-    this._client = options.client || defaults.client;
-
-    this.set({...defaults.props, ...props});
+    this.set({...this.options.props, ...props});
   }
 
   /**
@@ -93,13 +102,24 @@ export const Language = models.Language = class extends Model {
 export const Product = models.Product = class extends Model {
 
   /**
+   * @inheritdoc
+   */
+  mutators () {
+    return {
+      ...super.mutators(),
+      price: [number],
+      available_for_order: [integer, bool],
+    };
+  }
+
+  /**
    * Return a rest.Resource that provides access to the related Manufacturer
    * @param void
    * @return {rest.resources.Combinations}
    */
   manufacturer () {
     return new resources.Manufacturers({
-      client: this._client,
+      client: this.options.client,
       filter: (manufacturer) => {
         return this.related.manufacturer == manufacturer.id;
       },
@@ -113,7 +133,7 @@ export const Product = models.Product = class extends Model {
    */
   images () {
     return new resources.Images({
-      client: this._client,
+      client: this.options.client,
       root: `/images/products/${this.id}`,
     });
   }
@@ -125,7 +145,7 @@ export const Product = models.Product = class extends Model {
    */
   combinations () {
     return new resources.Combinations({
-      client: this._client,
+      client: this.options.client,
       filter: (combo) => {
         return this.related.combinations.indexOf(combo.id) > -1;
       },
@@ -140,13 +160,32 @@ export const Image = models.Image = class extends Model {
 export const Combination = models.Combination = class extends Model {
 
   /**
+   * Define property mutators
+   * @param void
+   * @return {Object}
+   */
+  mutators () {
+    return {
+      // property: [set-mutator, get-mutator],
+      ...super.mutators(),
+      id_product: [integer],
+      quantity: [integer],
+      price: [number],
+      ecotax: [number],
+      weight: [number],
+      unit_price_impact: [number],
+      minimal_quantity: [number],
+    };
+  }
+
+  /**
    * Return a rest.Resource that provides access to the parent Product
    * @param void
    * @return {rest.resources.Products}
    */
   product () {
     return new resources.Product({
-      client: this._client,
+      client: this.options.client,
       filter: (product) => this.related.product == product.id,
     });
   }
@@ -158,11 +197,39 @@ export const Combination = models.Combination = class extends Model {
    */
   product_option_values () {
     return new resources.ProductOptionValues({
-      client: this._client,
+      client: this.options.client,
       filter: (pov) => {
         return this.related.product_option_values.indexOf(pov.id) > -1;
-      }
+      },
     });
+  }
+
+  stock_availables () {
+    return new resources.StockAvailables({
+      client: this.options.client,
+      filter: (stock) => {
+        return stock.id_product_attribute == this.id;
+      },
+    });
+  }
+}
+
+export const StockAvailable = models.StockAvailable = class extends Model {
+
+  /**
+   * @inheritdoc
+   */
+  mutators () {
+    return {
+      ...super.mutators(),
+      id_product: [integer],
+      id_product_attribute: [integer],
+      id_shop: [integer],
+      id_shop_group: [integer],
+      quantity: [integer],
+      depends_on_stock: [integer],
+      out_of_stock: [integer],
+    };
   }
 }
 
