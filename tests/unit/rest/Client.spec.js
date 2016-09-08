@@ -47,7 +47,7 @@ describe('rest.Client', () => {
   describe('#get()', () => {
     it('sends a GET request', () => {
       let fetch = stub();
-      let response = {ok: true};
+      let response = {ok: true, clone: () => response};
       let promise = P.resolve(response);
       let client = new Client({fetch: {algo: fetch}});
 
@@ -59,7 +59,7 @@ describe('rest.Client', () => {
 
     it('throws an Error on non-OK response', () => {
       let fetch = stub();
-      let response = {ok: false};
+      let response = {ok: false, clone: () => response};
       let promise = P.resolve(response);
       let client = new Client({fetch: {algo: fetch}});
 
@@ -72,7 +72,7 @@ describe('rest.Client', () => {
 
     it('caches responses', () => {
       let text = P.resolve(fixture('products.xml'));
-      let response = {ok: true, text: stub().returns(text)};
+      let response = {ok: true, clone: () => response, text: stub().returns(text)};
       let fetch = stub().returns(P.resolve(response));
       let cache = {get: stub(), set: stub()};
 
