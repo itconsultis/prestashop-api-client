@@ -12,7 +12,8 @@ coerce.number = Number;
 
 /**
  * Given an Object or Map, return a list of two-element tuples. Each tuple is
- * an Array that contains the key at index 0, and the input at index 1.
+ * an Array that contains a key at index 0, and the corresponding value at 
+ * index 1.
  * @param {Object|Map} input
  * @return {Array}
  */

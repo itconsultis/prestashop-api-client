@@ -179,7 +179,8 @@ export const Client = class {
 export const resources = {};
 
 /**
- * a REST resource
+ * Resource is an HTTP-aware context that uses a Client to fetch XML payloads
+ * from the PrestaShop API. It converts XML payloads into Model instances.
  */
 export const Resource = resources.Resource = class {
 
@@ -411,7 +412,6 @@ resources.StockAvailables = class extends Resource {
   static get name () {
     return 'StockAvailables';
   }
-
 }
 
 resources.ProductOptionValues = class extends Resource {
