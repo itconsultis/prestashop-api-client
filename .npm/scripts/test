@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd) 
+PROJECT_ROOT=$(readlink -f "$SCRIPT_DIR/../../");
+
+cd "$PROJECT_ROOT"
+
+NODE_ENV=test ./node_modules/.bin/_mocha \
+    --compilers js:babel-core/register \
+    --timeout 15000 \
+    -r tests/bootstrap.js \
+    --recursive \
+    tests/unit \
+    tests/sandbox
