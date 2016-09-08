@@ -47,7 +47,7 @@ export const Client = class {
         root: '/shop/api',
       },
 
-      // LRU instance; see https://www.npmjs.com/package/lru-cache
+      // LRUCache instance; see https://www.npmjs.com/package/lru-cache
       cache: lru.instance(),
 
       // Fetch-related options
@@ -116,6 +116,7 @@ export const Client = class {
       this.cache.set(cachekey, response);
       return response.clone();
     })
+
     .catch((e) => {
       console.log(`${e.message} on url ${url}`);
       throw e;
@@ -184,7 +185,7 @@ export const Resource = resources.Resource = class {
 
   /**
    * Return the canonical constructor name. This is a workaround to a side
-   * effect of babel transpilation, which is that babel mangles class names.
+   * effect of Babel transpilation, which is that Babel mangles class names.
    * @property
    * @type {String}
    */
