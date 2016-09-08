@@ -24,7 +24,13 @@ export const Model = models.Model = class {
    */
   defaults () {
     return {
+      // the resource that created the model
+      resource: null,
+
+      // rest.Client instance
       client: null,
+
+      // model properties
       props: {},
     };
   }
@@ -45,12 +51,15 @@ export const Model = models.Model = class {
    * @param {Object} attrs - initial model attributes
    */
   constructor (options={}) {
-    let defaults = this.defaults();
+    this.options = {
+      ...this.defaults(),
+      ...options,
+    };
+
     let props = options.props || {};
+    this.set({...this.options.props, ...props});
 
-    this._client = options.client || defaults.client;
-
-    this.set({...defaults.props, ...props});
+    this._client = this.options.client;
   }
 
   /**
@@ -99,7 +108,7 @@ export const Product = models.Product = class extends Model {
    */
   manufacturer () {
     return new resources.Manufacturers({
-      client: this._client,
+      client: this.options.client,
       filter: (manufacturer) => {
         return this.related.manufacturer == manufacturer.id;
       },
@@ -113,7 +122,7 @@ export const Product = models.Product = class extends Model {
    */
   images () {
     return new resources.Images({
-      client: this._client,
+      client: this.options.client,
       root: `/images/products/${this.id}`,
     });
   }
@@ -125,7 +134,7 @@ export const Product = models.Product = class extends Model {
    */
   combinations () {
     return new resources.Combinations({
-      client: this._client,
+      client: this.options.client,
       filter: (combo) => {
         return this.related.combinations.indexOf(combo.id) > -1;
       },
@@ -146,7 +155,7 @@ export const Combination = models.Combination = class extends Model {
    */
   product () {
     return new resources.Product({
-      client: this._client,
+      client: this.options.client,
       filter: (product) => this.related.product == product.id,
     });
   }
@@ -158,7 +167,7 @@ export const Combination = models.Combination = class extends Model {
    */
   product_option_values () {
     return new resources.ProductOptionValues({
-      client: this._client,
+      client: this.options.client,
       filter: (pov) => {
         return this.related.product_option_values.indexOf(pov.id) > -1;
       }

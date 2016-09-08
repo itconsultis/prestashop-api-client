@@ -30,19 +30,6 @@ describe('xml', () => {
       });
     });
 
-    describe('.ids()', () => {
-      it('parses Product ids', () => {
-        let xml = fixture('products.xml');
-
-        return parse.product.ids(xml)
-
-        .then((ids) => {
-          expect(ids.length).to.equal(2);
-          expect(ids).to.include(8, 9);
-        });
-      });
-    });
-
   });
 
   describe('.parse.combination', () => {
@@ -80,5 +67,16 @@ describe('xml', () => {
     });
   });
 
+  describe('.parse.manufacturer', () => {
+    describe('.properties()', () => {
+      let xml = fixture('manufacturer-1.xml');
+
+      return parse.manufacturer.properties(xml)
+
+      .then((props) => {
+        
+      });
+    });
+  });
 
 });

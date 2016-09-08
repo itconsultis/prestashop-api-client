@@ -8,6 +8,7 @@ import models from './models';
 import { coerce } from './lang';
 import sort from './sort';
 import lru from './lru';
+import string from './string';
 
 const { integer } = coerce;
 const P = Promise;
@@ -18,14 +19,6 @@ const P = Promise;
  * HTTP client
  */
 export const Client = class {
-
-  /**
-   * @param void
-   * @return {rest.Client}
-   */
-  static instance (options={}) {
-    return new this(options);
-  }
 
   /**
    * Return instance configuration defaults
@@ -183,15 +176,35 @@ export const resources = {};
 export const Resource = resources.Resource = class {
 
   /**
+   * Return the canonical constructor name. This is a workaround to a side
+   * effect of babel transpilation, which is that babel mangles class names.
+   * @property
+   * @type {String}
+   */
+  static get name () {
+    return 'Resource';
+  }
+
+  /**
    * Return instance configuration defaults
    * @param void
    * @return {Object}
    */
   defaults () {
+    let classname = this.constructor.name;
+    let api = string.snake(classname);
+    let nodetype = classname.slice(0, -1).toLowerCase();
+    let root = `/${api}`;
+    let modelname = classname.slice(0, -1);
+
+    //console.log({api, nodetype, root, modelname});
+
     return {
-      client: Client.instance(),
-      root: '/',
-      model: models.Model,
+      client: null,
+      model: models[modelname],
+      root: root,
+      api: api,
+      nodetype: nodetype,
 
       // model list filter function
       filter: null,
@@ -281,8 +294,13 @@ export const Resource = resources.Resource = class {
    * @return {Model}
    */
   createModel (props) {
-    let constructor = this.options.model;
-    return new constructor({client: this, props: props});
+    let {model: constructor} = this.options;
+
+    return new constructor({
+      client: this.client,
+      resource: this,
+      props: props,
+    });
   }
 
   /**
@@ -293,7 +311,8 @@ export const Resource = resources.Resource = class {
    * @return {Array}
    */
   parseModelIds (xml) {
-    throw new NotImplemented();
+    let {api, nodetype} = this.options;
+    return parse.model.ids(xml, api, nodetype);
   }
 
   /**
@@ -311,21 +330,10 @@ export const Resource = resources.Resource = class {
 resources.Products = class extends Resource {
 
   /**
-   * @inheritdoc
+   * inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/products',
-      model: models.Product,
-    };
-  }
-
-  /**
-   * @inheritdoc
-   */
-  parseModelIds (xml) {
-    return parse.product.ids(xml);
+  static get name () {
+    return 'Products';
   }
 
   /**
@@ -339,15 +347,8 @@ resources.Products = class extends Resource {
 
 resources.Images = class extends Resource {
 
-  /**
-   * @inheritdoc
-   */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/images',
-      model: models.Image,
-    };
+  static get name () {
+    return 'Images';
   }
 
   /**
@@ -358,13 +359,6 @@ resources.Images = class extends Resource {
     .then((response) => response.text())
     .then((xml) => this.parseImageProperties(xml))
     .then((propsets) => propsets.map((props) => this.createModel(props)));
-  }
-
-  /**
-   * @inheritdoc
-   */
-  get (id) {
-    throw new NotImplemented();
   }
 
   /**
@@ -380,43 +374,45 @@ resources.Images = class extends Resource {
 
 
 resources.Manufacturers = class extends Resource {
+  /**
+   * inheritdoc
+   */
+  static get name () {
+    return 'Manufacturers';
+  }
 
   /**
-   * @inheritdoc
+   * inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/manufacturers',
-      model: models.Manufacturer,
-    };
+  parseModelProperties (xml) {
+    return parse.manufacturer.properties(xml);
   }
 }
 
 resources.Combinations = class extends Resource {
-
   /**
-   * @inheritdoc
+   * inheritdoc
    */
-  defaults () {
-    return {
-      ...super.defaults(),
-      root: '/combinations',
-      model: models.Combination,
-    };
+  static get name () {
+    return 'Combinations';
   }
 }
 
 resources.ProductOptionValues = class extends Resource {
 
   /**
+   * inheritdoc
+   */
+  static get name () {
+    return 'ProductOptionValues';
+  }
+
+  /**
    * @inheritdoc
    */
   defaults () {
     return {
       ...super.defaults(),
-      root: '/product_option_values',
-      model: models.ProductOptionValue,
       sort: sort.ascending(model => model.position),
     };
   }

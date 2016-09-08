@@ -28,6 +28,28 @@ export const parse = xml.parse = (xml) => {
   })
 };
 
+
+////////////////////////////////////////////////////////////////////////////////
+
+parse.model = {};
+
+/**
+ * Parse the supplied XML payload and return an array of model ids.
+ * @async Promise
+ * @param {String|Buffer} xml
+ * @param {String} api
+ * @param {String} nodetype
+ * @return {Array} 
+ */
+parse.model.ids = (xml, api, nodetype) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let list = obj.prestashop[api][0][nodetype];
+    return list.map((obj) => integer(obj.$.id));
+  });
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 parse.product = {};
@@ -62,20 +84,6 @@ parse.product.properties = (xml, language=1) => {
         'images': images.map(image => integer((image.id[0]||'').trim())),
       },
     };
-  });
-};
-
-/**
- * @async Promise
- * @param {String} xml
- * @return {Array}
- */
-parse.product.ids = (xml, language=1) => {
-  return parse(xml)
-
-  .then((obj) => {
-    let list = obj.prestashop.products[0].product;
-    return list.map((obj) => integer(obj.$.id));
   });
 };
 
@@ -144,6 +152,26 @@ parse.image.properties = (xml) => {
         'src': dec.$['xlink:href'],
       };
     });
+  })
+};
+
+////////////////////////////////////////////////////////////////////////////////
+parse.manufacturer = {};
+
+parse.manufacturer.properties = (xml, language=1) => {
+  return parse(xml)
+
+  .then((obj) => {
+    let base = obj.prestashop.manufacturer[0];
+    let lang = (attr) => attr.$.id == language;
+    let descs = base.description[0];
+
+    return {
+      'id': base.id[0].trim(),
+      'active': base.active[0].trim(),
+      'name': base.name[0].trim(),
+      'description': (descs.language.filter(lang).pop()._||'').trim(),
+    };
   })
 };
 

@@ -49,14 +49,13 @@ describe('rest.resources.Manufacturers', () => {
       resource.list()
 
       .then((models) => {
-        expect(client.get.callCount).to.equal(3);
+        expect(client.get.callCount).to.equal(2);
         expect(models).to.be.an.instanceof(Array);
-        expect(models.length).to.equal(2);
+        expect(models.length).to.equal(1);
 
-        let [manufacturer1, manufacturer2] = models;
+        let [manufacturer1] = models;
 
         expect(manufacturer1.id).to.equal(1);
-        expect(manufacturer2.id).to.equal(2);
       })
 
       .then(done)
