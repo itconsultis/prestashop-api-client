@@ -31,10 +31,6 @@ export const Client = class {
       host: 'localhost',
     };
 
-    let fetch = global.fetch || (() => {
-      return P.reject(new Error('fetch is not a global symbol'));
-    });
-
     return {
       language: 'en',
 
@@ -56,8 +52,15 @@ export const Client = class {
 
       // Fetch-related options
       fetch: {
+
         // the actual fetch function; facilitates testing
-        algo: fetch,
+        algo: (...args) => {
+          if (!global.fetch) {
+            return P.reject(new Error('fetch is not a global symbol'));
+          }
+          return global.fetch(...args);
+        },
+
         // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
         defaults: {
           cache: 'default',
