@@ -77,6 +77,7 @@ export const Client = class {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
+    this.funnels = {};
   }
 
   /**
@@ -98,8 +99,8 @@ export const Client = class {
    */
   get (uri, options={}) {
     let url = this.url(uri, options.query);
-    let cachekey = `${this.options.language}:${url}`;
-    let response = this.cache.get(cachekey);
+    let key = `${this.options.language}:GET:${url}`;
+    let response = this.cache.get(key);
 
     if (response) {
       return P.resolve(response.clone());
@@ -113,14 +114,9 @@ export const Client = class {
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
-      this.cache.set(cachekey, response);
+      this.cache.set(key, response);
       return response.clone();
     })
-
-    .catch((e) => {
-      console.log(`${e.message} on url ${url}`);
-      throw e;
-    });
   }
 
   /**
@@ -133,7 +129,7 @@ export const Client = class {
     let fullpath = path.join(proxy.root, uri);
 
     if (!lang.empty(query)) {
-      query = lang.tuples(query).sort(sort.ascending(pair => pair[0]));
+      query = lang.tuples(query).sort(sort.ascending(tuple => tuple[0]));
       fullpath += '?' + querystring.stringify(query);
     }
 
