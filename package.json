@@ -17,7 +17,7 @@
     "test": ".npm/scripts/test",
     "coverage": "./istanbul cover npm test",
     "start": "./nodemon --ignore ./dist -x 'npm test || true'",
-    "prepublish": "npm test"
+    "prepublish": "npm test && .npm/scripts/build"
   },
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
