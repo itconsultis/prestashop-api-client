@@ -1,6 +1,6 @@
 {
   "name": "prestashop-api-client",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "PrestaShop API client",
   "homepage": "https://github.com/itconsultis/prestashop-api-client",
   "bugs": "https://github.com/itconsultis/prestashop-api-client/issues",
@@ -25,7 +25,6 @@
     "lodash": "^3.10.1",
     "lru-cache": "^4.0.1",
     "snake-case": "^2.1.0",
-    "strip-bom": "^3.0.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
