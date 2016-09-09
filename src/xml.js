@@ -92,7 +92,7 @@ parse.product.properties = (xml, language=1) => {
 
   .then((obj) => {
     let base = obj.prestashop.product[0];
-    let assocs = base.associations[0];
+    let assocs = base.associations[0] || {};
     let lang = (obj) => attr(obj, 'id') == language;
 
     let names = base.name[0].language;
@@ -131,7 +131,7 @@ parse.combination.properties = (xml) => {
 
   .then((obj) => {
     let base = obj.prestashop.combination[0];
-    let assocs = base.associations[0];
+    let assocs = base.associations[0] || {};
     let povs = assocs.product_option_values || [];
 
     return {
