@@ -20,11 +20,6 @@ export const parse = xml.parse = (xml) => {
       err ? reject(err) : resolve(result);
     });
   })
-
-  .catch((e) => {
-    console.log(String(xml));
-    throw e;
-  })
 };
 
 
