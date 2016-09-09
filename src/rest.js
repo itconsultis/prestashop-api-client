@@ -244,6 +244,7 @@ export const Resource = resources.Resource = class {
    */
   list () {
     return this.client.get(this.options.root)
+
     .then((response) => response.text())
     .then((xml) => this.parseModelIds(xml))
     .then((ids) => this.createModels(ids))
@@ -258,7 +259,11 @@ export const Resource = resources.Resource = class {
       }
 
       return models;
-    });
+    })
+
+    .catch((e) => {
+      return [];
+    })
   }
 
   /**
@@ -271,16 +276,28 @@ export const Resource = resources.Resource = class {
   }
 
   /**
-   * Resolve a single Model instance
+   * Resolve a single Model instance, or null if there was an error of any kind
    * @async Promise
    * @param {mixed} id
-   * @return {Model}
+   * @return {Model|null}
    */
   get (id) {
-    return this.client.get(`${this.options.root}/${id}`)
-    .then((response) => response.text())
+    let uri = `${this.options.root}/${id}`;
+    let promise;
+
+    try {
+      promise = this.client.get(uri)
+    }
+    catch (e) {
+      console.log(`failed to acquire model properties on request path ${uri}`);
+      console.log(e.message);
+      console.log(e.stack);
+      return P.resolve(null);
+    }
+
+    return promise.then((response) => response.text())
     .then((xml) => this.parseModelProperties(xml))
-    .then((props) => this.createModel(props));
+    .then((props) => this.createModel(props))
   }
 
   /**
