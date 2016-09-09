@@ -98,8 +98,8 @@ parse.product.properties = (xml, language=1) => {
     let names = base.name[0].language;
     let descs = base.description[0].language;
     let shortdescs = base.description_short[0].language;
-    let combos = assocs.combinations[0].combination;
-    let images = assocs.images[0].image;
+    let combos = assocs.combinations[0].combination || [];
+    let images = assocs.images[0].image || [];;
 
     return {
       'id': text(base.id),
@@ -132,29 +132,29 @@ parse.combination.properties = (xml) => {
   .then((obj) => {
     let base = obj.prestashop.combination[0];
     let assocs = base.associations[0];
-    let povs = assocs.product_option_values;
+    let povs = assocs.product_option_values || [];
 
     return {
-      'id': base.id[0].trim(),
-      'id_product': base.id_product[0]._.trim(),
-      'location': base.location[0].trim(),
-      'ean13': base.ean13[0].trim(),
-      'upc': base.upc[0].trim(),
-      'quantity': base.quantity[0].trim(),
-      'reference': base.reference[0].trim(),
-      'supplier_reference': base.supplier_reference[0].trim(),
-      'wholesale_price': base.wholesale_price[0].trim(),
-      'price': base.price[0].trim(),
-      'ecotax': base.ecotax[0].trim(),
-      'weight': base.weight[0].trim(),
-      'unit_price_impact': base.unit_price_impact[0].trim(),
-      'minimal_quantity': base.minimal_quantity[0].trim(),
-      'default_on': base.default_on[0].trim(),
-      'available_date': base.available_date[0].trim(),
+      'id': text(base.id),
+      'id_product': text(base.id_product),
+      'location': text(base.location),
+      'ean13': text(base.ean13),
+      'upc': text(base.upc),
+      'quantity': text(base.quantity),
+      'reference': text(base.reference),
+      'supplier_reference': text(base.supplier_reference),
+      'wholesale_price': text(base.wholesale_price),
+      'price': text(base.price),
+      'ecotax': text(base.ecotax),
+      'weight': text(base.weight),
+      'unit_price_impact': text(base.unit_price_impact),
+      'minimal_quantity': text(base.minimal_quantity),
+      'default_on': text(base.default_on),
+      'available_date': text(base.available_date),
       'related': {
-        'product': integer(base.id_product[0]._.trim()),
+        'product': integer(text(base.id_product)),
         'product_option_values': povs.map((pov) => {
-          return integer(pov.product_option_value[0].id[0].trim());
+          return integer(text(pov.product_option_value[0].id));
         }),
       },
     };

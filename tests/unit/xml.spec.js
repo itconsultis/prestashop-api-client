@@ -11,7 +11,8 @@ describe('xml', () => {
 
   describe('.parse.product', () => {
     describe('.properties()', () => {
-      it('parses Product model properties', () => {
+
+      it('parses Product model properties (product-8.xml)', () => {
         let xml = fixture('product-8.xml');
 
         return parse.product.properties(xml)
@@ -28,6 +29,23 @@ describe('xml', () => {
           expect(props.related.images).to.include(24);
         })
       });
+
+      it('parses Product model properties (product-10.xml)', () => {
+        let xml = fixture('product-10.xml');
+
+        return parse.product.properties(xml)
+
+        .then((props) => {
+          expect(Number(props.id)).to.equal(10);
+          expect(props.name).to.equal('product-10-name-en');
+          expect(props.description).to.be.a('string');
+          expect(props.description_short).to.be.a('string');
+          expect(props.related.manufacturer).to.equal(0);
+          expect(props.related.combinations).to.include(64, 65, 66, 67, 68, 69, 70, 71, 72, 73);
+          expect(props.related.images).to.be.an.instanceof(Array);
+        })
+      });
+
     });
 
   });
