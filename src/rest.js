@@ -12,6 +12,8 @@ import string from './string';
 
 const { integer } = coerce;
 const P = Promise;
+const noop = () => {};
+const dummylogger = {log: noop, info: noop};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +52,9 @@ export const Client = class {
       // LRUCache instance; see https://www.npmjs.com/package/lru-cache
       cache: lru.instance(),
 
+      // logger
+      logger: dummylogger,
+
       // Fetch-related options
       fetch: {
 
@@ -77,7 +82,7 @@ export const Client = class {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
-    this.funnels = {};
+    this.logger = this.options.logger;
   }
 
   /**
@@ -166,7 +171,11 @@ export const Client = class {
       throw new InvalidArgument(`invalid root resource: "${key}"`);
     }
 
-    return new constructor({...options, client: this});
+    return new constructor({
+      ...options,
+      client: this,
+      logger: this.logger,
+    });
   }
 
 }
@@ -206,6 +215,7 @@ export const Resource = resources.Resource = class {
 
     return {
       client: null,
+      logger: dummylogger,
       model: models[modelname],
       root: root,
       api: api,
@@ -225,6 +235,7 @@ export const Resource = resources.Resource = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.client = this.options.client;
+    this.logger = this.options.logger; 
   }
 
   /**
@@ -289,9 +300,9 @@ export const Resource = resources.Resource = class {
       promise = this.client.get(uri)
     }
     catch (e) {
-      console.log(`failed to acquire model properties on request path ${uri}`);
-      console.log(e.message);
-      console.log(e.stack);
+      this.logger.log(`failed to acquire model properties on request path ${uri}`);
+      this.logger.log(e.message);
+      this.logger.log(e.stack);
       return P.resolve(this.createModel());
     }
 

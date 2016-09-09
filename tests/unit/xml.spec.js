@@ -9,8 +9,8 @@ describe('xml', () => {
     });
   });
 
-  describe('.parse.product', () => {
-    describe('.properties()', () => {
+  describe('.parse', () => {
+    describe('.product.properties()', () => {
 
       it('parses Product model properties (product-8.xml)', () => {
         let xml = fixture('product-8.xml');
@@ -50,8 +50,8 @@ describe('xml', () => {
 
   });
 
-  describe('.parse.combination', () => {
-    describe('.properties()', () => {
+  describe('.parse', () => {
+    describe('.combination.properties()', () => {
       it('parses Combination properties', () => {
         let xml = fixture('combination-47.xml');
 
@@ -85,8 +85,8 @@ describe('xml', () => {
     });
   });
 
-  describe('.parse.manufacturer', () => {
-    describe('.properties()', () => {
+  describe('.parse', () => {
+    describe('.manufacturer.properties()', () => {
       it('parses Manufacturer properties', () => {
         let xml = fixture('manufacturer-1.xml');
 
@@ -102,8 +102,8 @@ describe('xml', () => {
     });
   });
 
-  describe('.parse.stock_available', () => {
-    describe('.properties()', () => {
+  describe('.parse', () => {
+    describe('.stock_available.properties()', () => {
       it('parses StockAvailable properties', () => {
         let xml = fixture('stock-available-80.xml');
 
@@ -123,8 +123,8 @@ describe('xml', () => {
   });
   
 
-  describe('.parse.product_option_value', () => {
-    describe('.properties', () => {
+  describe('.parse', () => {
+    describe('.product_option_value.properties', () => {
       it('parses ProductOptionValue properties', () => {
         let xml = fixture('product-option-values-25.xml');
 
