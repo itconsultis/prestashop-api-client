@@ -292,7 +292,7 @@ export const Resource = resources.Resource = class {
       console.log(`failed to acquire model properties on request path ${uri}`);
       console.log(e.message);
       console.log(e.stack);
-      return P.resolve(null);
+      return P.resolve(this.createModel());
     }
 
     return promise.then((response) => response.text())
@@ -315,7 +315,7 @@ export const Resource = resources.Resource = class {
    * @param {Object} props
    * @return {Model}
    */
-  createModel (props) {
+  createModel (props={}) {
     let {model: constructor} = this.options;
 
     return new constructor({

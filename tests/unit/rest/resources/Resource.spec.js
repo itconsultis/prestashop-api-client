@@ -19,14 +19,15 @@ describe('rest.resources.Resource', () => {
   });
 
   describe ('#get', () => {
-    it('returns null if client raises an exception', () => {
+    it('returns a Model if client raises an exception', () => {
       let client = {get: stub().throws(new Error('http-related-error'))};
-      let resource = new Resource({client, root: '/foo/bar'});
+      let Model = () => {};
+      let resource = new Resource({client, model: Model, root: '/foo/bar'});
 
       assert(resource.client === client);
 
       return resource.get('blah')
-      .then((model) => expect(model).to.equal(null))
+      .then((model) => expect(model).to.be.an.instanceof(Model))
       .catch((e) => { 
         console.log(e);
         throw e;
