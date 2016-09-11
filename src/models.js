@@ -31,7 +31,7 @@ export const Model = models.Model = class {
       client: null,
 
       // model properties
-      props: {},
+      attrs: {},
     };
   }
 
@@ -54,7 +54,8 @@ export const Model = models.Model = class {
    */
   constructor (options={}) {
     this.options = merge(this.defaults(), options);
-    this.set(this.options.props);
+    this.attrs = {};
+    this.set(this.options.attrs);
   }
 
   /**
@@ -70,7 +71,7 @@ export const Model = models.Model = class {
 
     let assign = (value, prop) => {
       let [set] = mutators[prop] || defaults;
-      this[prop] = set(value);
+      this.attrs[prop] = set(value);
     };
 
     if (arity < 1) {
@@ -88,6 +89,23 @@ export const Model = models.Model = class {
     let [prop, value] = args;
     assign(value, prop);
   }
+
+  /**
+   * @param void
+   * @return {Object}
+   */
+  attributes () {
+    return {...this.attrs};
+  }
+
+  /**
+   * @param void
+   * @return {Object}
+   */
+  toJSON () {
+    return this.attributes();  
+  }
+
 }
 
 export const Language = models.Language = class extends Model {
@@ -116,7 +134,7 @@ export const Product = models.Product = class extends Model {
     return new resources.Manufacturers({
       client: this.options.client,
       filter: (manufacturer) => {
-        return this.related.manufacturer == manufacturer.id;
+        return this.related.manufacturer == manufacturer.attrs.id;
       },
     });
   }
@@ -129,7 +147,7 @@ export const Product = models.Product = class extends Model {
   images () {
     return new resources.Images({
       client: this.options.client,
-      root: `/images/products/${this.id}`,
+      root: `/images/products/${this.attrs.id}`,
     });
   }
 
@@ -142,7 +160,7 @@ export const Product = models.Product = class extends Model {
     return new resources.Combinations({
       client: this.options.client,
       filter: (combo) => {
-        return this.related.combinations.indexOf(combo.id) > -1;
+        return this.related.combinations.indexOf(combo.attrs.id) > -1;
       },
     });
   }
@@ -182,7 +200,7 @@ export const Combination = models.Combination = class extends Model {
   product () {
     return new resources.Product({
       client: this.options.client,
-      filter: (product) => this.related.product == product.id,
+      filter: (product) => this.related.product == product.attrs.id,
     });
   }
 
@@ -196,7 +214,7 @@ export const Combination = models.Combination = class extends Model {
     return new resources.ProductOptionValues({
       client: this.options.client,
       filter: (pov) => {
-        return this.related.product_option_values.indexOf(pov.id) > -1;
+        return this.related.product_option_values.indexOf(pov.attrs.id) > -1;
       },
     });
   }
@@ -211,7 +229,7 @@ export const Combination = models.Combination = class extends Model {
     return new resources.StockAvailables({
       client: this.options.client,
       filter: (stock) => {
-        return stock.id_product_attribute == this.id;
+        return stock.id_product_attribute == this.attrs.id;
       },
     });
   }

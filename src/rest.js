@@ -62,11 +62,6 @@ export const Client = class {
 
         // the actual fetch function; facilitates testing
         algo: fetch,
-
-        // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
-        defaults: {
-          cache: 'default',
-        },
       },
     };
   }
@@ -79,6 +74,7 @@ export const Client = class {
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
     this.logger = this.options.logger;
+    this.funnel = {};
   }
 
   /**
@@ -102,18 +98,30 @@ export const Client = class {
     let url = this.url(uri, options.query);
     let key = `${this.options.language}:GET:${url}`;
     let response = this.cache.get(key);
+    let funnel = this.funnel;
 
     if (response) {
       return P.resolve(response.clone());
     }
 
-    let fetchopts = this.createFetchOptions({...options.fetch, method: 'GET'});
+    if (!funnel[key]) {
 
-    return this.fetch(url, fetchopts).then((response) => {
-      this.validateResponse(response);
-      this.cache.set(key, response);
-      return response.clone();
-    })
+      let fetchopts = this.createFetchOptions({...options.fetch, method: 'GET'});
+
+      funnel[key] = this.fetch(url, fetchopts).then((response) => {
+        delete funnel[key];
+        this.validateResponse(response);
+        this.cache.set(key, response);
+        return response.clone();
+      })
+
+      .catch((e) => {
+        delete funnel[key];
+        throw e;
+      })
+    }
+
+    return this.funnel[key];
   }
 
   /**
@@ -174,22 +182,16 @@ export const Client = class {
   }
 
   /**
-   * @param {String} key
+   * @param {String} api - snake case form of a resource class name
    * @param {Object} options
    * @return {rest.Resource}
    */
-  resource (key, options={}) {
-    let dict = {
-      products: resources.Products,
-      manufacturers: resources.Manufacturers,
-      combinations: resources.Combinations,
-      images: resources.Images,
-    };
-
-    let constructor = dict[key];
+  resource (api, options={}) {
+    let classname = string.studly(api);
+    let constructor = resources[classname];
 
     if (!constructor) {
-      throw new InvalidArgument(`invalid root resource: "${key}"`);
+      throw new InvalidArgument(`invalid root resource: "${api}"`);
     }
 
     return new constructor({
@@ -329,7 +331,7 @@ export const Resource = resources.Resource = class {
 
     return promise.then((response) => response.text())
     .then((xml) => this.parseModelProperties(xml))
-    .then((props) => this.createModel(props))
+    .then((attrs) => this.createModel(attrs))
   }
 
   /**
@@ -344,16 +346,16 @@ export const Resource = resources.Resource = class {
 
   /**
    * Given an object containing model properties, return a Model instance.
-   * @param {Object} props
+   * @param {Object} attrs
    * @return {Model}
    */
-  createModel (props={}) {
+  createModel (attrs={}) {
     let {model: constructor} = this.options;
 
     return new constructor({
       client: this.client,
       resource: this,
-      props: props,
+      attrs: attrs,
     });
   }
 
@@ -414,7 +416,7 @@ resources.Images = class extends Resource {
     return this.client.get(this.options.root)
     .then((response) => response.text())
     .then((xml) => this.parseImageProperties(xml))
-    .then((propsets) => propsets.map((props) => this.createModel(props)));
+    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
   }
 
   /**

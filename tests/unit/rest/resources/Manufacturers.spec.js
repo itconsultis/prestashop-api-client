@@ -55,7 +55,7 @@ describe('rest.resources.Manufacturers', () => {
 
         let [manufacturer1] = models;
 
-        expect(manufacturer1.id).to.equal(1);
+        expect(manufacturer1.attrs.id).to.equal(1);
       })
 
       .then(done)

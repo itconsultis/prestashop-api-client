@@ -6,7 +6,7 @@ import LRU from 'lru-cache';
  */
 export const instance = (options={}) => {
   return new LRU({
-    max: 256,
+    max: 1000,
     maxAge: 15 * 60 * 1000,
     ...options,
   });
