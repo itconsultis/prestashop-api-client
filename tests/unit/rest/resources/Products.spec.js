@@ -14,7 +14,7 @@ describe('rest.resources.Products', () => {
       let resource = new Products({client: client});
 
       let text = P.resolve(fixture('product-8.xml'));
-      let response = {ok: true, text: stub().returns(text)};
+      let response = {ok: true, text: stub().returns(text), clone: () => response};
 
       client.get.withArgs('/products/8').returns(P.resolve(response));
 
@@ -39,12 +39,12 @@ describe('rest.resources.Products', () => {
       let resource = new Products({client: client});
 
       // the product list response
-      let response1 = {ok: true, text: stub().returns(fixture('products.xml'))};
+      let response1 = {ok: true, text: stub().returns(fixture('products.xml')), clone: () => response1};
       client.get.withArgs('/products').returns(P.resolve(response1));
 
       // responses for each product id in the list response
-      let response2 = {ok: true, text: stub().returns(fixture('product-8.xml'))};
-      let response3 = {ok: true, text: stub().returns(fixture('product-9.xml'))};
+      let response2 = {ok: true, text: stub().returns(fixture('product-8.xml')), clone: () => response2};
+      let response3 = {ok: true, text: stub().returns(fixture('product-9.xml')), clone: () => response3};
       client.get.withArgs('/products/8').returns(P.resolve(response2));
       client.get.withArgs('/products/9').returns(P.resolve(response3));
 
@@ -57,8 +57,8 @@ describe('rest.resources.Products', () => {
 
         let [product8, product9] = models;
 
-        expect(product8.id).to.equal(8);
-        expect(product9.id).to.equal(9);
+        expect(product8.attrs.id).to.equal(8);
+        expect(product9.attrs.id).to.equal(9);
       })
 
       .then(done)

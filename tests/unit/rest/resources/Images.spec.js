@@ -28,7 +28,7 @@ describe('rest.resources.Images', () => {
         expect(models).to.be.an.instanceof(Array);
         expect(models.length).to.equal(1);
         expect(models[0]).to.be.an.instanceof(Image);
-        expect(models[0].src).to.equal('http://localhost/api/images/products/8/24');
+        expect(models[0].attrs.src).to.equal('http://localhost/api/images/products/8/24');
       })
 
       .then(done)

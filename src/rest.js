@@ -62,11 +62,6 @@ export const Client = class {
 
         // the actual fetch function; facilitates testing
         algo: fetch,
-
-        // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
-        defaults: {
-          cache: 'default',
-        },
       },
     };
   }
@@ -79,6 +74,7 @@ export const Client = class {
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
     this.logger = this.options.logger;
+    this.funnel = {};
   }
 
   /**
@@ -102,18 +98,31 @@ export const Client = class {
     let url = this.url(uri, options.query);
     let key = `${this.options.language}:GET:${url}`;
     let response = this.cache.get(key);
+    let funnel = this.funnel;
 
     if (response) {
-      return P.resolve(response.clone());
+      return P.resolve(response);
     }
 
-    let fetchopts = this.createFetchOptions({...options.fetch, method: 'GET'});
+    if (funnel[key]) {
+      return funnel[key];
+    }
 
-    return this.fetch(url, fetchopts).then((response) => {
+    let fopts = this.createFetchOptions({...options.fetch, method: 'GET'});
+
+    funnel[key] = this.fetch(url, fopts).then((response) => {
       this.validateResponse(response);
       this.cache.set(key, response);
-      return response.clone();
+      delete funnel[key];
+      return response;
     })
+
+    .catch((e) => {
+      delete funnel[key];
+      throw e;
+    })
+
+    return funnel[key];
   }
 
   /**
@@ -133,6 +142,11 @@ export const Client = class {
     return `${webservice.scheme}://${webservice.host}${fullpath}`;
   }
 
+  /**
+   * Return node-fetch request options
+   * @param {Object} augments
+   * @return {Object}
+   */
   createFetchOptions (augments={}) {
     return {
       ...this.options.fetch.defaults, 
@@ -141,11 +155,16 @@ export const Client = class {
     };
   }
 
-  createHeaders () {
+  /**
+   * Return a dictionary containing request headers
+   * @param {Object} augments
+   * @return {Object}
+   */
+  createHeaders (augments={}) {
     let {key} = {...this.options.webservice};
     let Authorization = this.createAuthorizationHeader(key);
 
-    return {Authorization};
+    return {...augments, Authorization};
   }
 
   /**
@@ -174,22 +193,16 @@ export const Client = class {
   }
 
   /**
-   * @param {String} key
+   * @param {String} api - snake case form of a resource class name
    * @param {Object} options
    * @return {rest.Resource}
    */
-  resource (key, options={}) {
-    let dict = {
-      products: resources.Products,
-      manufacturers: resources.Manufacturers,
-      combinations: resources.Combinations,
-      images: resources.Images,
-    };
-
-    let constructor = dict[key];
+  resource (api, options={}) {
+    let classname = string.studly(api);
+    let constructor = resources[classname];
 
     if (!constructor) {
-      throw new InvalidArgument(`invalid root resource: "${key}"`);
+      throw new InvalidArgument(`invalid root resource: "${api}"`);
     }
 
     return new constructor({
@@ -277,7 +290,7 @@ export const Resource = resources.Resource = class {
   list () {
     return this.client.get(this.options.root)
 
-    .then((response) => response.text())
+    .then((response) => response.clone().text())
     .then((xml) => this.parseModelIds(xml))
     .then((ids) => this.createModels(ids))
     .then((models) => {
@@ -292,10 +305,6 @@ export const Resource = resources.Resource = class {
 
       return models;
     })
-
-    .catch((e) => {
-      return [];
-    })
   }
 
   /**
@@ -304,7 +313,7 @@ export const Resource = resources.Resource = class {
    * @return {models.Model}
    */
   first () {
-    return this.list().then(models => models[0] || null);
+    return this.list().then(models => models.shift() || null);
   }
 
   /**
@@ -327,9 +336,9 @@ export const Resource = resources.Resource = class {
       return P.resolve(this.createModel());
     }
 
-    return promise.then((response) => response.text())
-    .then((xml) => this.parseModelProperties(xml))
-    .then((props) => this.createModel(props))
+    return promise.then((response) => response.clone().text())
+    .then((xml) => this.parseModelAttributes(xml))
+    .then((attrs) => this.createModel(attrs))
   }
 
   /**
@@ -344,16 +353,16 @@ export const Resource = resources.Resource = class {
 
   /**
    * Given an object containing model properties, return a Model instance.
-   * @param {Object} props
+   * @param {Object} attrs
    * @return {Model}
    */
-  createModel (props={}) {
+  createModel (attrs={}) {
     let {model: constructor} = this.options;
 
     return new constructor({
       client: this.client,
       resource: this,
-      props: props,
+      attrs: attrs,
     });
   }
 
@@ -375,7 +384,7 @@ export const Resource = resources.Resource = class {
    * @param {String} xml
    * @return {Object}
    */
-  parseModelProperties (xml) {
+  parseModelAttributes (xml) {
     let nodetype = this.options.nodetype;
     let ns = parse[nodetype];
 
@@ -413,8 +422,8 @@ resources.Images = class extends Resource {
   list () {
     return this.client.get(this.options.root)
     .then((response) => response.text())
-    .then((xml) => this.parseImageProperties(xml))
-    .then((propsets) => propsets.map((props) => this.createModel(props)));
+    .then((xml) => this.parseImageAttributes(xml))
+    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
   }
 
   /**
@@ -423,7 +432,7 @@ resources.Images = class extends Resource {
    * @param {String} xml
    * @return {Array}
    */
-  parseImageProperties (xml) {
+  parseImageAttributes (xml) {
     return parse.image.properties(xml);
   }
 }
