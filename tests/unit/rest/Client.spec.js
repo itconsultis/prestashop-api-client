@@ -154,7 +154,7 @@ describe('rest.Client', () => {
     it('returns Authorization header value', () => {
       let client = new Client();
       let key = 'IW6SQL9FICVWMJ6BWBASP24ABCNSSEZW';
-      let expected = 'SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
+      let expected = 'Basic SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
       let actual = client.createAuthorizationHeader(key);
 
       expect(actual).to.equal(expected);
@@ -164,7 +164,7 @@ describe('rest.Client', () => {
   describe('#createFetchOptions()', () => {
     it('return value includes #headers property containing the Authorization header', () => {
       let client = new Client({webservice: {key: 'foo'}});
-      let Authorization = 'SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
+      let Authorization = 'Basic SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
 
       client.createAuthorizationHeader = stub().returns(Authorization);
 
