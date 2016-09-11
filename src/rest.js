@@ -421,7 +421,7 @@ resources.Images = class extends Resource {
    */
   list () {
     return this.client.get(this.options.root)
-    .then((response) => response.text())
+    .then((response) => response.clone().text())
     .then((xml) => this.parseImageAttributes(xml))
     .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
   }
