@@ -170,7 +170,37 @@ export const Product = models.Product = class extends Model {
 }
 
 export const Image = models.Image = class extends Model {
-  // implement me
+
+  /**
+   * Return a Buffer that contains the raw image
+   * @async Promise
+   * @param void
+   * @return {Buffer}
+   */
+  load () {
+    if (this.loading) {
+      return P.resolve(this.loading);
+    }
+
+    let {client} = this.options;
+    let attrs = this.attrs;
+
+    this.loading = client.get(attrs.src)
+
+    .then((response) => {
+      response = response.clone();
+      return P.all([P.resolve(response), response.clone().buffer()]);
+    })
+
+    .then((result) => {
+      let [response, buffer] = result;
+      // TODO inspect the Content-Type response header and set "type" attribute
+      return buffer;
+    })
+
+    return this.loading;
+  }
+
 }
 
 export const Combination = models.Combination = class extends Model {
