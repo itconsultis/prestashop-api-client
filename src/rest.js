@@ -168,8 +168,9 @@ export const Client = class {
     let username = key;
     let password = '';
     let precursor = `${username}:${password}`;
+    let credentials = Buffer.from(precursor).toString('base64');
 
-    return Buffer.from(precursor).toString('base64');
+    return `Basic ${credentials}`;
   }
 
   /**
