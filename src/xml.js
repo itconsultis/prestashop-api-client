@@ -87,7 +87,7 @@ parse.product = {};
  * @param {String} xml
  * @return {Object}
  */
-parse.product.properties = (xml, language=1) => {
+parse.product.attributes = (xml, language=1) => {
   return parse(xml)
 
   .then((obj) => {
@@ -126,7 +126,7 @@ parse.combination = {};
  * @param {String} xml
  * @return {Object}
  */
-parse.combination.properties = (xml) => {
+parse.combination.attributes = (xml) => {
   return parse(xml)
 
   .then((obj) => {
@@ -168,7 +168,7 @@ parse.image = {};
  * @param {String} xml
  * @return {Object}
  */
-parse.image.properties = (xml) => {
+parse.image.attributes = (xml) => {
   return parse(xml)
 
   .then((obj) => {
@@ -187,7 +187,7 @@ parse.image.properties = (xml) => {
 
 parse.manufacturer = {};
 
-parse.manufacturer.properties = (xml, language=1) => {
+parse.manufacturer.attributes = (xml, language=1) => {
   return parse(xml)
 
   .then((obj) => {
@@ -208,7 +208,7 @@ parse.manufacturer.properties = (xml, language=1) => {
 
 parse.stock_available = {};
 
-parse.stock_available.properties = (xml, language=1) => {
+parse.stock_available.attributes = (xml, language=1) => {
   return parse(xml)
 
   .then((obj) => {
@@ -231,7 +231,7 @@ parse.stock_available.properties = (xml, language=1) => {
 
 parse.product_option_value = {};
 
-parse.product_option_value.properties = (xml, language=1) => {
+parse.product_option_value.attributes = (xml, language=1) => {
   return parse(xml)
 
   .then((obj) => {

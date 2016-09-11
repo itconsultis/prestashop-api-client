@@ -10,12 +10,12 @@ describe('xml', () => {
   });
 
   describe('.parse', () => {
-    describe('.product.properties()', () => {
+    describe('.product.attributes()', () => {
 
-      it('parses Product model properties (product-8.xml)', () => {
+      it('parses Product model attributes (product-8.xml)', () => {
         let xml = fixture('product-8.xml');
 
-        return parse.product.properties(xml)
+        return parse.product.attributes(xml)
 
         .then((props) => {
           expect(Number(props.id)).to.equal(8);
@@ -30,10 +30,10 @@ describe('xml', () => {
         })
       });
 
-      it('parses Product model properties (product-10.xml)', () => {
+      it('parses Product model attributes (product-10.xml)', () => {
         let xml = fixture('product-10.xml');
 
-        return parse.product.properties(xml)
+        return parse.product.attributes(xml)
 
         .then((props) => {
           expect(Number(props.id)).to.equal(10);
@@ -51,11 +51,11 @@ describe('xml', () => {
   });
 
   describe('.parse', () => {
-    describe('.combination.properties()', () => {
-      it('parses Combination properties', () => {
+    describe('.combination.attributes()', () => {
+      it('parses Combination attributes', () => {
         let xml = fixture('combination-47.xml');
 
-        return parse.combination.properties(xml)
+        return parse.combination.attributes(xml)
 
         .then((props) => {
           let floatzero = 0.000000;
@@ -84,11 +84,11 @@ describe('xml', () => {
   });
 
   describe('.parse', () => {
-    describe('.manufacturer.properties()', () => {
-      it('parses Manufacturer properties', () => {
+    describe('.manufacturer.attributes()', () => {
+      it('parses Manufacturer attributes', () => {
         let xml = fixture('manufacturer-1.xml');
 
-        return parse.manufacturer.properties(xml)
+        return parse.manufacturer.attributes(xml)
 
         .then((props) => {
           expect(Number(props.id)).to.equal(1);
@@ -101,11 +101,11 @@ describe('xml', () => {
   });
 
   describe('.parse', () => {
-    describe('.stock_available.properties()', () => {
-      it('parses StockAvailable properties', () => {
+    describe('.stock_available.attributes()', () => {
+      it('parses StockAvailable attributes', () => {
         let xml = fixture('stock-available-80.xml');
 
-        return parse.stock_available.properties(xml)
+        return parse.stock_available.attributes(xml)
 
         .then((props) => {
           expect(Number(props.id)).to.equal(80);
@@ -122,11 +122,11 @@ describe('xml', () => {
   
 
   describe('.parse', () => {
-    describe('.product_option_value.properties', () => {
-      it('parses ProductOptionValue properties', () => {
+    describe('.product_option_value.attributes', () => {
+      it('parses ProductOptionValue attributes', () => {
         let xml = fixture('product-option-values-25.xml');
 
-        return parse.product_option_value.properties(xml)
+        return parse.product_option_value.attributes(xml)
 
         .then((props) => {
           expect(Number(props.id)).to.equal(25);

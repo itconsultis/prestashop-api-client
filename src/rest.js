@@ -391,11 +391,11 @@ export const Resource = resources.Resource = class {
     if (!ns) {
       throw new UnexpectedValue(`parser namespace not found on node type ${nodetype}`);
     }
-    if (!ns.properties) {
+    if (!ns.attributes) {
       throw new UnexpectedValue(`model properties parser not found on node type ${nodetype}`);
     }
 
-    return parse[nodetype].properties(xml, this.language);
+    return parse[nodetype].attributes(xml, this.language);
   }
 
 }
@@ -423,7 +423,7 @@ resources.Images = class extends Resource {
     return this.client.get(this.options.root)
     .then((response) => response.clone().text())
     .then((xml) => this.parseImageAttributes(xml))
-    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
+    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)))
   }
 
   /**
@@ -433,7 +433,7 @@ resources.Images = class extends Resource {
    * @return {Array}
    */
   parseImageAttributes (xml) {
-    return parse.image.properties(xml);
+    return parse.image.attributes(xml);
   }
 }
 
