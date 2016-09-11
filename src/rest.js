@@ -9,9 +9,12 @@ import { coerce } from './lang';
 import sort from './sort';
 import lru from './lru';
 import string from './string';
+import fetch from 'node-fetch';
 
 const { integer } = coerce;
 const P = Promise;
+const noop = () => {};
+const dummylogger = {log: noop, info: noop};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -40,8 +43,9 @@ export const Client = class {
         'en': 1,
       },
 
-      // API proxy configuration
-      proxy: {
+      // PrestaShop web service parameters
+      webservice: {
+        key: 'your-prestashop-key',
         scheme: location.protocol.slice(0, -1),
         host: location.host,
         root: '/shop/api',
@@ -50,21 +54,18 @@ export const Client = class {
       // LRUCache instance; see https://www.npmjs.com/package/lru-cache
       cache: lru.instance(),
 
+      // logger
+      logger: dummylogger,
+
       // Fetch-related options
       fetch: {
 
         // the actual fetch function; facilitates testing
-        algo: (...args) => {
-          if (!global.fetch) {
-            return P.reject(new Error('fetch is not a global symbol'));
-          }
-          return global.fetch(...args);
-        },
+        algo: fetch,
 
         // Request options; see https://developer.mozilla.org/en-US/docs/Web/API/Request
         defaults: {
           cache: 'default',
-          mode: 'same-origin',
         },
       },
     };
@@ -77,7 +78,7 @@ export const Client = class {
     this.options = {...this.defaults(), ...options};
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
-    this.funnels = {};
+    this.logger = this.options.logger;
   }
 
   /**
@@ -106,11 +107,7 @@ export const Client = class {
       return P.resolve(response.clone());
     }
 
-    let fetchopts = {
-      ...this.options.fetch.defaults, 
-      ...options.fetch,
-      method: 'GET',
-    };
+    let fetchopts = this.createFetchOptions({...options.fetch, method: 'GET'});
 
     return this.fetch(url, fetchopts).then((response) => {
       this.validateResponse(response);
@@ -125,15 +122,30 @@ export const Client = class {
    * @param {String}
    */
   url (uri, query={}) {
-    let {proxy} = this.options;
-    let fullpath = path.join(proxy.root, uri);
+    let {webservice} = this.options;
+    let fullpath = path.join(webservice.root, uri);
 
     if (!lang.empty(query)) {
       query = lang.tuples(query).sort(sort.ascending(tuple => tuple[0]));
       fullpath += '?' + querystring.stringify(query);
     }
 
-    return `${proxy.scheme}://${proxy.host}${fullpath}`;
+    return `${webservice.scheme}://${webservice.host}${fullpath}`;
+  }
+
+  createFetchOptions (augments={}) {
+    return {
+      ...this.options.fetch.defaults, 
+      headers: this.createHeaders(),
+      ...augments,
+    };
+  }
+
+  createHeaders () {
+    let {key} = {...this.options.webservice};
+    let Authorization = this.createAuthorizationHeader(key);
+
+    return {Authorization};
   }
 
   /**
@@ -145,6 +157,19 @@ export const Client = class {
     if (!response.ok) {
       throw new UnexpectedValue('got non-2XX HTTP response');
     }
+  }
+
+  /**
+   * Return an Authorization header value given a web service key
+   * @param {String} key
+   * @return {String}
+   */
+  createAuthorizationHeader (key) {
+    let username = key;
+    let password = '';
+    let precursor = `${username}:${password}`;
+
+    return Buffer.from(precursor).toString('base64');
   }
 
   /**
@@ -166,7 +191,11 @@ export const Client = class {
       throw new InvalidArgument(`invalid root resource: "${key}"`);
     }
 
-    return new constructor({...options, client: this});
+    return new constructor({
+      ...options,
+      client: this,
+      logger: this.logger,
+    });
   }
 
 }
@@ -206,6 +235,7 @@ export const Resource = resources.Resource = class {
 
     return {
       client: null,
+      logger: dummylogger,
       model: models[modelname],
       root: root,
       api: api,
@@ -225,6 +255,7 @@ export const Resource = resources.Resource = class {
   constructor (options={}) {
     this.options = {...this.defaults(), ...options};
     this.client = this.options.client;
+    this.logger = this.options.logger; 
   }
 
   /**
@@ -289,9 +320,9 @@ export const Resource = resources.Resource = class {
       promise = this.client.get(uri)
     }
     catch (e) {
-      console.log(`failed to acquire model properties on request path ${uri}`);
-      console.log(e.message);
-      console.log(e.stack);
+      this.logger.log(`failed to acquire model properties on request path ${uri}`);
+      this.logger.log(e.message);
+      this.logger.log(e.stack);
       return P.resolve(this.createModel());
     }
 
