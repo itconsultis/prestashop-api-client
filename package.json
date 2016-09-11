@@ -1,6 +1,6 @@
 {
   "name": "prestashop-api-client",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "PrestaShop API client",
   "homepage": "https://github.com/itconsultis/prestashop-api-client",
   "bugs": "https://github.com/itconsultis/prestashop-api-client/issues",

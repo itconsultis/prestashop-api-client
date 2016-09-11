@@ -2,7 +2,7 @@ import path from 'path';
 import lang from './lang';
 import querystring from './querystring';
 import { resources } from './rest';
-import { each } from 'lodash';
+import { each, merge } from 'lodash';
 import { NotImplemented } from './exceptions';
 import sort from './sort';
 
@@ -53,13 +53,8 @@ export const Model = models.Model = class {
    * @param {Object} attrs - initial model attributes
    */
   constructor (options={}) {
-    this.options = {
-      ...this.defaults(),
-      ...options,
-    };
-
-    let props = options.props || {};
-    this.set({...this.options.props, ...props});
+    this.options = merge(this.defaults(), options);
+    this.set(this.options.props);
   }
 
   /**
