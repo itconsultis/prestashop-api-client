@@ -1,11 +1,10 @@
 import path from 'path';
-import lang from './lang';
-import { each, merge } from 'lodash';
 import querystring from './querystring';
+import { each, merge } from 'lodash';
 import { NotImplemented, InvalidArgument, UnexpectedValue } from './exceptions';
 import { parse } from './xml';
+import { empty, tuples, coerce } from './lang';
 import models from './models';
-import { coerce } from './lang';
 import sort from './sort';
 import lru from './lru';
 import string from './string';
@@ -133,8 +132,8 @@ export const Client = class {
   url (uri, query={}) {
     let qs = '';
 
-    if (!lang.empty(query)) {
-      query = lang.tuples(query).sort();
+    if (!empty(query)) {
+      query = tuples(query).sort();
       qs = '?' + querystring.stringify(query);
     }
 
@@ -250,8 +249,6 @@ export const Resource = resources.Resource = class {
     let nodetype = api.slice(0, -1);
     let root = `/${api}`;
     let modelname = classname.slice(0, -1);
-
-    //console.log({api, nodetype, root, modelname});
 
     return {
       client: null,
