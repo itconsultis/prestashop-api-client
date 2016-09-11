@@ -36,13 +36,13 @@ export const Model = models.Model = class {
   }
 
   /**
-   * Define property mutators
+   * Define attribute mutators
    * @param void
    * @return {Object}
    */
   mutators () {
     return {
-      // property: [set-mutator, get-mutator],
+      // attribute: [set-mutator, get-mutator],
       id: [integer],
       quantity: [integer],
       position: [integer],
@@ -59,8 +59,8 @@ export const Model = models.Model = class {
   }
 
   /**
-   * Assign a single property or mass-assign multiple properties. Map
-   * property values through the dictionary returned by mutators().
+   * Assign a single attribute or mass-assign multiple attribute. Map
+   * attribute values through the dictionary returned by mutators().
    * @param ...mixed args
    * @return void
    */
@@ -69,9 +69,9 @@ export const Model = models.Model = class {
     let mutators = this.mutators();
     let defaults = [v=>v];
 
-    let assign = (value, prop) => {
-      let [set] = mutators[prop] || defaults;
-      this.attrs[prop] = set(value);
+    let assign = (value, attr) => {
+      let [set] = mutators[attr] || defaults;
+      this.attrs[attr] = set(value);
     };
 
     if (arity < 1) {
@@ -86,8 +86,21 @@ export const Model = models.Model = class {
       return;
     }
 
-    let [prop, value] = args;
-    assign(value, prop);
+    let [attr, value] = args;
+    assign(value, attr);
+  }
+
+  /**
+   * Attribute getter
+   * @param {String} attr
+   * @return mixed
+   */
+  get (attr) {
+    let defaults = [v=>v, v=>v];
+    let mutators = this.mutators();
+    let [set, get] = mutators[attr] || defaults;
+
+    return get(this.attrs[attr] || null);
   }
 
   /**
@@ -134,7 +147,7 @@ export const Product = models.Product = class extends Model {
     return new resources.Manufacturers({
       client: this.options.client,
       filter: (manufacturer) => {
-        return this.related.manufacturer == manufacturer.attrs.id;
+        return this.get('related').manufacturer == manufacturer.attrs.id;
       },
     });
   }
@@ -160,7 +173,7 @@ export const Product = models.Product = class extends Model {
     return new resources.Combinations({
       client: this.options.client,
       filter: (combo) => {
-        return this.related.combinations.indexOf(combo.attrs.id) > -1;
+        return this.get('related').combinations.indexOf(combo.attrs.id) > -1;
       },
     });
   }
@@ -200,7 +213,7 @@ export const Combination = models.Combination = class extends Model {
   product () {
     return new resources.Product({
       client: this.options.client,
-      filter: (product) => this.related.product == product.attrs.id,
+      filter: (product) => this.get('related').product == product.attrs.id,
     });
   }
 
@@ -214,7 +227,7 @@ export const Combination = models.Combination = class extends Model {
     return new resources.ProductOptionValues({
       client: this.options.client,
       filter: (pov) => {
-        return this.related.product_option_values.indexOf(pov.attrs.id) > -1;
+        return this.get('related').product_option_values.indexOf(pov.attrs.id) > -1;
       },
     });
   }

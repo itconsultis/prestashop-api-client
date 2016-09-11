@@ -141,6 +141,11 @@ export const Client = class {
     return `${webservice.scheme}://${webservice.host}${fullpath}`;
   }
 
+  /**
+   * Return node-fetch request options
+   * @param {Object} augments
+   * @return {Object}
+   */
   createFetchOptions (augments={}) {
     return {
       ...this.options.fetch.defaults, 
@@ -149,11 +154,16 @@ export const Client = class {
     };
   }
 
-  createHeaders () {
+  /**
+   * Return a dictionary containing request headers
+   * @param {Object} augments
+   * @return {Object}
+   */
+  createHeaders (augments={}) {
     let {key} = {...this.options.webservice};
     let Authorization = this.createAuthorizationHeader(key);
 
-    return {Authorization};
+    return {...augments, Authorization};
   }
 
   /**
@@ -330,7 +340,7 @@ export const Resource = resources.Resource = class {
     }
 
     return promise.then((response) => response.text())
-    .then((xml) => this.parseModelProperties(xml))
+    .then((xml) => this.parseModelAttributes(xml))
     .then((attrs) => this.createModel(attrs))
   }
 
@@ -377,7 +387,7 @@ export const Resource = resources.Resource = class {
    * @param {String} xml
    * @return {Object}
    */
-  parseModelProperties (xml) {
+  parseModelAttributes (xml) {
     let nodetype = this.options.nodetype;
     let ns = parse[nodetype];
 
@@ -415,7 +425,7 @@ resources.Images = class extends Resource {
   list () {
     return this.client.get(this.options.root)
     .then((response) => response.text())
-    .then((xml) => this.parseImageProperties(xml))
+    .then((xml) => this.parseImageAttributes(xml))
     .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
   }
 
@@ -425,7 +435,7 @@ resources.Images = class extends Resource {
    * @param {String} xml
    * @return {Array}
    */
-  parseImageProperties (xml) {
+  parseImageAttributes (xml) {
     return parse.image.properties(xml);
   }
 }
