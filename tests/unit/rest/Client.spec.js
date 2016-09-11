@@ -161,5 +161,18 @@ describe('rest.Client', () => {
     });
   });
 
+  describe('#createFetchOptions()', () => {
+    it('return value includes #headers property containing the Authorization header', () => {
+      let client = new Client({webservice: {key: 'foo'}});
+      let Authorization = 'SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
+
+      client.createAuthorizationHeader = stub().returns(Authorization);
+
+      let fetchopts = client.createFetchOptions();
+      expect(fetchopts.headers).to.be.an('object');
+      expect(fetchopts.headers['Authorization']).to.equal(Authorization);
+    });
+  });
+
 });
 
