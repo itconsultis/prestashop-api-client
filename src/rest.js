@@ -1,6 +1,6 @@
 import path from 'path';
 import lang from './lang';
-import { each } from 'lodash';
+import { each, merge } from 'lodash';
 import querystring from './querystring';
 import { NotImplemented, InvalidArgument, UnexpectedValue } from './exceptions';
 import { parse } from './xml';
@@ -75,7 +75,7 @@ export const Client = class {
    * @param {Object} options
    */
   constructor (options={}) {
-    this.options = {...this.defaults(), ...options};
+    this.options = merge(this.defaults(), options);
     this.fetch = this.options.fetch.algo;
     this.cache = this.options.cache;
     this.logger = this.options.logger;
@@ -87,8 +87,8 @@ export const Client = class {
    * @type {Number}
    */
   get language () {
-    let opts = this.options;
-    return opts.languages[opts.language];
+    let {languages, language: isocode} = this.options;
+    return languages[isocode];
   }
 
   /**
