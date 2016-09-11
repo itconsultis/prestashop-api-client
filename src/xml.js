@@ -153,9 +153,7 @@ parse.combination.properties = (xml) => {
       'available_date': text(base.available_date),
       'related': {
         'product': integer(text(base.id_product)),
-        'product_option_values': povs.map((pov) => {
-          return integer(text(pov.product_option_value[0].id));
-        }),
+        'product_option_values': integer(text(povs[0].product_option_value[0].id)),
       },
     };
   })

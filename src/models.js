@@ -30,8 +30,10 @@ export const Model = models.Model = class {
       // rest.Client instance
       client: null,
 
-      // model properties
-      attrs: {},
+      // model attributes
+      attrs: {
+        related: {},   
+      },
     };
   }
 
@@ -56,6 +58,7 @@ export const Model = models.Model = class {
     this.options = merge(this.defaults(), options);
     this.attrs = {};
     this.set(this.options.attrs);
+    delete this.options.attrs;
   }
 
   /**
@@ -88,19 +91,6 @@ export const Model = models.Model = class {
 
     let [attr, value] = args;
     assign(value, attr);
-  }
-
-  /**
-   * Attribute getter
-   * @param {String} attr
-   * @return mixed
-   */
-  get (attr) {
-    let defaults = [v=>v, v=>v];
-    let mutators = this.mutators();
-    let [set, get] = mutators[attr] || defaults;
-
-    return get(this.attrs[attr] || null);
   }
 
   /**
@@ -144,11 +134,11 @@ export const Product = models.Product = class extends Model {
    * @return {rest.resources.Combinations}
    */
   manufacturer () {
+    let related = this.attrs.related;
+
     return new resources.Manufacturers({
       client: this.options.client,
-      filter: (manufacturer) => {
-        return this.get('related').manufacturer == manufacturer.attrs.id;
-      },
+      filter: (manufacturer) => related.manufacturer == manufacturer.attrs.id,
     });
   }
 
@@ -170,11 +160,11 @@ export const Product = models.Product = class extends Model {
    * @return {rest.resources.Combinations}
    */
   combinations () {
+    let related = this.attrs.related;
+
     return new resources.Combinations({
       client: this.options.client,
-      filter: (combo) => {
-        return this.get('related').combinations.indexOf(combo.attrs.id) > -1;
-      },
+      filter: (combo) => related.combinations.indexOf(combo.attrs.id) > -1,
     });
   }
 }
@@ -213,7 +203,7 @@ export const Combination = models.Combination = class extends Model {
   product () {
     return new resources.Product({
       client: this.options.client,
-      filter: (product) => this.get('related').product == product.attrs.id,
+      filter: (product) => this.attrs.related.product == product.attrs.id,
     });
   }
 
@@ -227,7 +217,7 @@ export const Combination = models.Combination = class extends Model {
     return new resources.ProductOptionValues({
       client: this.options.client,
       filter: (pov) => {
-        return this.get('related').product_option_values.indexOf(pov.attrs.id) > -1;
+        return this.attrs.related.product_option_values == pov.attrs.id;
       },
     });
   }
@@ -242,7 +232,7 @@ export const Combination = models.Combination = class extends Model {
     return new resources.StockAvailables({
       client: this.options.client,
       filter: (stock) => {
-        return stock.id_product_attribute == this.attrs.id;
+        return this.attrs.id == stock.attrs.id_product_attribute;
       },
     });
   }

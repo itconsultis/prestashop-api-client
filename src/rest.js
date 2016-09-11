@@ -101,27 +101,28 @@ export const Client = class {
     let funnel = this.funnel;
 
     if (response) {
-      return P.resolve(response.clone());
+      return P.resolve(response);
     }
 
-    if (!funnel[key]) {
-
-      let fetchopts = this.createFetchOptions({...options.fetch, method: 'GET'});
-
-      funnel[key] = this.fetch(url, fetchopts).then((response) => {
-        delete funnel[key];
-        this.validateResponse(response);
-        this.cache.set(key, response);
-        return response.clone();
-      })
-
-      .catch((e) => {
-        delete funnel[key];
-        throw e;
-      })
+    if (funnel[key]) {
+      return funnel[key];
     }
 
-    return this.funnel[key];
+    let fopts = this.createFetchOptions({...options.fetch, method: 'GET'});
+
+    funnel[key] = this.fetch(url, fopts).then((response) => {
+      this.validateResponse(response);
+      this.cache.set(key, response);
+      delete funnel[key];
+      return response;
+    })
+
+    .catch((e) => {
+      delete funnel[key];
+      throw e;
+    })
+
+    return funnel[key];
   }
 
   /**
@@ -289,7 +290,7 @@ export const Resource = resources.Resource = class {
   list () {
     return this.client.get(this.options.root)
 
-    .then((response) => response.text())
+    .then((response) => response.clone().text())
     .then((xml) => this.parseModelIds(xml))
     .then((ids) => this.createModels(ids))
     .then((models) => {
@@ -304,10 +305,6 @@ export const Resource = resources.Resource = class {
 
       return models;
     })
-
-    .catch((e) => {
-      return [];
-    })
   }
 
   /**
@@ -316,7 +313,7 @@ export const Resource = resources.Resource = class {
    * @return {models.Model}
    */
   first () {
-    return this.list().then(models => models[0] || null);
+    return this.list().then(models => models.shift() || null);
   }
 
   /**
@@ -339,7 +336,7 @@ export const Resource = resources.Resource = class {
       return P.resolve(this.createModel());
     }
 
-    return promise.then((response) => response.text())
+    return promise.then((response) => response.clone().text())
     .then((xml) => this.parseModelAttributes(xml))
     .then((attrs) => this.createModel(attrs))
   }
