@@ -42,18 +42,48 @@ describe('rest.Client', () => {
 
       expect(actual).to.equal(expected);
     });
+
+    it('query string is deterministic', () => {
+      let client = new Client({
+        webservice: {scheme: 'https', host: 'api.local:3000', root: '/api'},
+      });
+
+      let query1 = {a: 1, b: 2, c: 3};
+      let query2 = {c: 3, a: 1, b: 2};
+
+      let url1 = client.url('/foo/bar', query1);
+      let url2 = client.url('/foo/bar', query2);
+
+      expect(url1).to.equal(url2);
+    });
+
   });
 
   describe('#get()', () => {
-    it('sends a GET request', () => {
+    it('sends a GET request given a relative path', () => {
       let fetch = stub();
       let response = {ok: true, clone: () => response};
-      let promise = P.resolve(response);
       let client = new Client({fetch: {algo: fetch}});
 
-      fetch.withArgs(match.string, match.object).returns(promise);
+      fetch.withArgs(match.string, match.object).returns(P.resolve(response));
 
       return client.get('/foo/bar')
+
+      .then((res) => {
+        expect(fetch.calledOnce).to.be.ok;
+        expect(res).to.equal(response);
+      })
+    });
+
+    it('sends a GET request given a fully qualified url', () => {
+      let fetch = stub();
+      let response = {ok: true, clone: () => response};
+      let client = new Client({fetch: {algo: fetch}});
+      let url = 'http://prestashop-api-host/api/images/products/8';
+
+      fetch.withArgs(url, match.object).returns(P.resolve(response));
+
+      return client.get(url)
 
       .then((res) => {
         expect(fetch.calledOnce).to.be.ok;
@@ -144,7 +174,7 @@ describe('rest.Client', () => {
   });
 
   describe('#createFetchOptions()', () => {
-    it('return value includes #headers property containing the Authorization header', () => {
+    it('includes Authorization header', () => {
       let client = new Client({webservice: {key: 'foo'}});
       let Authorization = 'Basic SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
 

@@ -7,7 +7,17 @@ export default querystring;
 
 /**
  * Stringify a query per RFC 3986
- * @param {Object} query
+ * @usage
+ *
+ *  // serialize a dictionary
+ *  stringify({foo: 1, bar: 2})
+ *  >>> foo=1&bar=2
+ *
+ *  // serialize an array of key-value tuples
+ *  stringify([['foo', 1], ['bar', 2]])
+ *  >>> foo=1&bar=2
+ *
+ * @param {Object|Array} query - a dictionary or an array of key-value tuples
  * @return {String}
  */
 export const stringify = querystring.stringify = (query) => {

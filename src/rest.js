@@ -131,15 +131,21 @@ export const Client = class {
    * @param {String}
    */
   url (uri, query={}) {
+    let qs = '';
+
+    if (!lang.empty(query)) {
+      query = lang.tuples(query).sort();
+      qs = '?' + querystring.stringify(query);
+    }
+
+    if (uri.indexOf('http') === 0) {
+      return uri + qs;
+    }
+
     let {webservice} = this.options;
     let fullpath = path.join(webservice.root, uri);
 
-    if (!lang.empty(query)) {
-      query = lang.tuples(query).sort(sort.ascending(tuple => tuple[0]));
-      fullpath += '?' + querystring.stringify(query);
-    }
-
-    return `${webservice.scheme}://${webservice.host}${fullpath}`;
+    return `${webservice.scheme}://${webservice.host}${fullpath}${qs}`;
   }
 
   /**
