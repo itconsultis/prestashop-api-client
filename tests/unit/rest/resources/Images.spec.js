@@ -16,7 +16,7 @@ describe('rest.resources.Images', () => {
       });
 
       let text = P.resolve(fixture('product-8-images.xml'));
-      let response = {ok: true, text: stub().returns(text)};
+      let response = {ok: true, text: stub().returns(text), clone: () => response};
 
       client.get.withArgs('/images/products/8').returns(P.resolve(response));
 
