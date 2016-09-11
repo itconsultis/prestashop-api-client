@@ -22,7 +22,6 @@ export const parse = xml.parse = (xml) => {
   })
 };
 
-
 /**
  * Extract the text value from a node 
  * @param mixed input
@@ -39,7 +38,7 @@ const text = (input) => {
 };
 
 /**
- * Extract an attribute value on a node
+ * Extract a node attribute value
  * @param {mixed} input
  * @return {String}
  */
