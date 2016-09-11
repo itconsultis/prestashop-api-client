@@ -22,10 +22,10 @@
   "author": "IT Consultis <tech@it-consultis.com",
   "license": "MIT",
   "dependencies": {
+    "i": "^0.3.5",
     "lodash": "^3.10.1",
     "lru-cache": "^4.0.1",
     "request-promise": "^4.1.1",
-    "snake-case": "^2.1.0",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
