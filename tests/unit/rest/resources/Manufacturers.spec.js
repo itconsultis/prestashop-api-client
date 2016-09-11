@@ -14,7 +14,7 @@ describe('rest.resources.Manufacturers', () => {
       let resource = new Manufacturers({client});
 
       let text = P.resolve(fixture('manufacturer-1.xml'));
-      let response = {ok: true, text: stub().returns(text)};
+      let response = {ok: true, text: stub().returns(text), clone: () => response};
 
       client.get.withArgs('/manufacturers/1').returns(P.resolve(response));
 
@@ -39,11 +39,11 @@ describe('rest.resources.Manufacturers', () => {
       let resource = new Manufacturers({client: client});
 
       // the manufacturer list response
-      let response1 = {ok: true, text: stub().returns(fixture('manufacturers.xml'))};
+      let response1 = {ok: true, text: stub().returns(fixture('manufacturers.xml')), clone: () => response1};
       client.get.withArgs('/manufacturers').returns(P.resolve(response1));
 
       // responses for each manufacturer id in the list response
-      let response2 = {ok: true, text: stub().returns(fixture('manufacturer-1.xml'))};
+      let response2 = {ok: true, text: stub().returns(fixture('manufacturer-1.xml')), clone: () => response2};
       client.get.withArgs('/manufacturers/1').returns(P.resolve(response2));
 
       resource.list()
