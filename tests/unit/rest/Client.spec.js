@@ -21,9 +21,9 @@ describe('rest.Client', () => {
   });
 
   describe('#url()', () => {
-    it('derives a proxy url', () => {
+    it('derives a web service url', () => {
       let client = new Client({
-        proxy: {scheme: 'https', host: 'api.local:3000', root: '/api'},
+        webservice: {scheme: 'https', host: 'api.local:3000', root: '/api'},
       });
 
       let expected = 'https://api.local:3000/api/foo/bar';
@@ -32,9 +32,9 @@ describe('rest.Client', () => {
       expect(actual).to.equal(expected);
     });
 
-    it('derives a proxy url with query parameters', () => {
+    it('derives a web service url with query parameters', () => {
       let client = new Client({
-        proxy: {scheme: 'https', host: 'api.local:3000', root: '/api'},
+        webservice: {scheme: 'https', host: 'api.local:3000', root: '/api'},
       });
 
       let expected = 'https://api.local:3000/api/foo/bar?a=1&b=2';
@@ -100,7 +100,7 @@ describe('rest.Client', () => {
 
       let client = new Client({
         language: 'en',
-        proxy: {scheme: 'https', host: 'api.local:3000', root: '/api'},
+        server: {scheme: 'https', host: 'api.local:3000', root: '/api'},
         fetch: {algo: fetch},
         cache: cache,
       });
@@ -148,6 +148,17 @@ describe('rest.Client', () => {
         expect(client.resource('images')).to.be.ok;
       });
     })
+  });
+
+  describe('#createAuthorizationHeader()', () => {
+    it('returns Authorization header value', () => {
+      let client = new Client();
+      let key = 'IW6SQL9FICVWMJ6BWBASP24ABCNSSEZW';
+      let expected = 'SVc2U1FMOUZJQ1ZXTUo2QldCQVNQMjRBQkNOU1NFWlc6';
+      let actual = client.createAuthorizationHeader(key);
+
+      expect(actual).to.equal(expected);
+    });
   });
 
 });
