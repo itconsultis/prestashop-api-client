@@ -12,4 +12,4 @@ NODE_ENV=test ./node_modules/.bin/_mocha \
     -r tests/bootstrap.js \
     --recursive \
     tests/unit \
-    tests/sandbox
+    tests/functional

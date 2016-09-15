@@ -1,11 +1,10 @@
 import path from 'path';
-import lang from './lang';
-import { each, merge } from 'lodash';
 import querystring from './querystring';
+import { each, merge } from 'lodash';
 import { NotImplemented, InvalidArgument, UnexpectedValue } from './exceptions';
 import { parse } from './xml';
+import { empty, tuples, coerce } from './lang';
 import models from './models';
-import { coerce } from './lang';
 import sort from './sort';
 import lru from './lru';
 import string from './string';
@@ -46,9 +45,9 @@ export const Client = class {
       // PrestaShop web service parameters
       webservice: {
         key: 'your-prestashop-key',
-        scheme: location.protocol.slice(0, -1),
-        host: location.host,
-        root: '/shop/api',
+        scheme: 'https',
+        host: 'your-prestashop-host',
+        root: '/api',
       },
 
       // LRUCache instance; see https://www.npmjs.com/package/lru-cache
@@ -104,6 +103,7 @@ export const Client = class {
       return P.resolve(response);
     }
 
+    // multiple requests on the same key converge on a single promise
     if (funnel[key]) {
       return funnel[key];
     }
@@ -111,9 +111,9 @@ export const Client = class {
     let fopts = this.createFetchOptions({...options.fetch, method: 'GET'});
 
     funnel[key] = this.fetch(url, fopts).then((response) => {
+      delete funnel[key];
       this.validateResponse(response);
       this.cache.set(key, response);
-      delete funnel[key];
       return response;
     })
 
@@ -131,15 +131,21 @@ export const Client = class {
    * @param {String}
    */
   url (uri, query={}) {
+    let qs = '';
+
+    if (!empty(query)) {
+      query = tuples(query).sort();
+      qs = '?' + querystring.stringify(query);
+    }
+
+    if (uri.indexOf('http') === 0) {
+      return uri + qs;
+    }
+
     let {webservice} = this.options;
     let fullpath = path.join(webservice.root, uri);
 
-    if (!lang.empty(query)) {
-      query = lang.tuples(query).sort(sort.ascending(tuple => tuple[0]));
-      fullpath += '?' + querystring.stringify(query);
-    }
-
-    return `${webservice.scheme}://${webservice.host}${fullpath}`;
+    return `${webservice.scheme}://${webservice.host}${fullpath}${qs}`;
   }
 
   /**
@@ -245,8 +251,6 @@ export const Resource = resources.Resource = class {
     let root = `/${api}`;
     let modelname = classname.slice(0, -1);
 
-    //console.log({api, nodetype, root, modelname});
-
     return {
       client: null,
       logger: dummylogger,
@@ -333,6 +337,8 @@ export const Resource = resources.Resource = class {
       this.logger.log(`failed to acquire model properties on request path ${uri}`);
       this.logger.log(e.message);
       this.logger.log(e.stack);
+
+      // FIXME
       return P.resolve(this.createModel());
     }
 
@@ -391,11 +397,11 @@ export const Resource = resources.Resource = class {
     if (!ns) {
       throw new UnexpectedValue(`parser namespace not found on node type ${nodetype}`);
     }
-    if (!ns.properties) {
+    if (!ns.attributes) {
       throw new UnexpectedValue(`model properties parser not found on node type ${nodetype}`);
     }
 
-    return parse[nodetype].properties(xml, this.language);
+    return parse[nodetype].attributes(xml, this.language);
   }
 
 }
@@ -423,7 +429,7 @@ resources.Images = class extends Resource {
     return this.client.get(this.options.root)
     .then((response) => response.clone().text())
     .then((xml) => this.parseImageAttributes(xml))
-    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)));
+    .then((attrsets) => attrsets.map((attrs) => this.createModel(attrs)))
   }
 
   /**
@@ -433,7 +439,7 @@ resources.Images = class extends Resource {
    * @return {Array}
    */
   parseImageAttributes (xml) {
-    return parse.image.properties(xml);
+    return parse.image.attributes(xml);
   }
 }
 
