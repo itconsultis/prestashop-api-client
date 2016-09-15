@@ -45,9 +45,9 @@ export const Client = class {
       // PrestaShop web service parameters
       webservice: {
         key: 'your-prestashop-key',
-        scheme: location.protocol.slice(0, -1),
-        host: location.host,
-        root: '/shop/api',
+        scheme: 'https',
+        host: 'your-prestashop-host',
+        root: '/api',
       },
 
       // LRUCache instance; see https://www.npmjs.com/package/lru-cache
