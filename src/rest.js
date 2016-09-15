@@ -103,6 +103,7 @@ export const Client = class {
       return P.resolve(response);
     }
 
+    // multiple requests on the same key converge on a single promise
     if (funnel[key]) {
       return funnel[key];
     }
@@ -110,9 +111,9 @@ export const Client = class {
     let fopts = this.createFetchOptions({...options.fetch, method: 'GET'});
 
     funnel[key] = this.fetch(url, fopts).then((response) => {
+      delete funnel[key];
       this.validateResponse(response);
       this.cache.set(key, response);
-      delete funnel[key];
       return response;
     })
 
@@ -336,6 +337,8 @@ export const Resource = resources.Resource = class {
       this.logger.log(`failed to acquire model properties on request path ${uri}`);
       this.logger.log(e.message);
       this.logger.log(e.stack);
+
+      // FIXME
       return P.resolve(this.createModel());
     }
 
