@@ -6,7 +6,7 @@ const fail = () => P.reject();
 
 describe('rest.Client', () => {
 
-  describe('#language property', () => {
+  describe('#language', () => {
     it('is a language id', () => {
       let client = new Client({
         language: 'es',
@@ -139,6 +139,17 @@ describe('rest.Client', () => {
         expect(cache.get.calledTwice).to.be.ok;
         expect(cache.set.calledOnce).to.be.ok;
       })
+    });
+
+    it('concurrent requests on the same URL converge on a single promise', () => {
+      let promise = P.resolve();
+      let fetch = stub().returns(promise);
+      let client = new Client({fetch: {algo: fetch}});
+      let reqpath = '/foo/bar';
+
+      expect(client.get(reqpath)).to.equal(promise);
+      expect(client.get(reqpath)).to.equal(promise);
+      expect(fetch.calledOnce).to.be.ok;
     });
 
   });
