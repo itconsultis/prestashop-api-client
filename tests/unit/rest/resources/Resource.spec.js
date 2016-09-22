@@ -19,7 +19,7 @@ describe('rest.resources', () => {
       });
     });
 
-    describe ('#get', () => {
+    describe ('#get()', () => {
       it('returns a Model if client raises an exception', () => {
         let client = {get: stub().throws(new Error('http-related-error'))};
         let Model = () => {};
