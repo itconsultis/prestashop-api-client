@@ -197,5 +197,31 @@ describe('rest.Client', () => {
     });
   });
 
+  describe('#setLanguageIso()', () => {
+    it('changes the current language', () => {
+      let client = new Client({languages: {en: 1, es: 2}});
+      assert(client.language != 2);
+      client.setLanguageIso('es');
+
+      expect(client.language).to.equal(2);
+    });
+
+    it('complains if the supplied ISO code is invalid', () => {
+      let client = new Client({languages: {en: 1, es: 2}});
+      let invocation = () => client.setLanguageIso('zh');
+
+      expect(invocation).to.throw(Error);
+    });
+  });
+
+  describe('#getLanguage()', () => {
+    it('returns the current language ISO code', () => {
+      let client = new Client({language: 'en', languages: {en: 1, es: 2}});
+      assert(client.language === 1);
+
+      expect(client.getLanguageIso()).to.equal('en');
+    });
+  });
+
 });
 

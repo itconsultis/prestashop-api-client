@@ -87,6 +87,30 @@ export const Client = class {
   }
 
   /**
+   * Set the current client language ISO code
+   * @param {String} iso
+   * @return void
+   */
+  setLanguageIso (iso) {
+    let {languages} = this.options;
+
+    if (!languages.hasOwnProperty(iso)) {
+      throw new Error(`language "${iso}" is not configured`);
+    }
+
+    this.options.language = iso;
+  }
+
+  /**
+   * Return the current client language ISO code
+   * @param void
+   * @return {String}
+   */
+  getLanguageIso () {
+    return this.options.language;
+  }
+
+  /**
    * Send a GET request
    * @async Promise
    * @param {String} url
