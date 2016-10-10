@@ -39,9 +39,11 @@ describe('models.Model', () => {
   describe('#mutators()', () => {
     it('returns an object', () => {
       let model = new Model();
-      expect(model.mutators()).to.be.ok;
-      expect(model.mutators()).to.be.an.instanceof(Object);
-      expect(model.mutators()).not.to.be.an.instanceof(Array)
+      let mutators = model.mutators();
+
+      expect(mutators).to.be.ok;
+      expect(mutators).to.be.an.instanceof(Object);
+      expect(mutators).not.to.be.an.instanceof(Array)
     });
   });
 

@@ -2,7 +2,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import fs from 'fs';
 import path from 'path';
+import assert from 'assert';
 
+global.assert = assert;
 global.expect = expect;
 global.sinon = sinon;
 global.match = sinon.match;
