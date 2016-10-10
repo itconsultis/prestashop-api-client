@@ -28,7 +28,7 @@ const client = new rest.Client({
 
 Change the current client language
 ```javascript
-client.setLanguage('en');
+client.setLanguageIso('en');
 ```
 
 Access a resource
