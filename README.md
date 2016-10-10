@@ -26,6 +26,11 @@ const client = new rest.Client({
 });
 ```
 
+Change the current client language
+```javascript
+client.setLanguage('en');
+```
+
 Access a resource
 ```javascript
 const resource = client.resource('products');
