@@ -51,7 +51,8 @@ export const Client = class {
       },
 
       // LRUCache instance; see https://www.npmjs.com/package/lru-cache
-      cache: lru.instance(),
+      // disable caching by default
+      cache: lru.dummy(),
 
       // logger
       logger: dummylogger,
