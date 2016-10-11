@@ -37,14 +37,15 @@ const resource = client.resource('products');
 ```
 
 Retrieve all models exposed by a resource
-```
+
+```javascript
 resource.list().then((models) => {
   // models is an Array containing Model instances
 });
 ```
 
 Retrieve a single model from a resource by its ID
-```
+```javascript
 resource.get(id).then((model) => {
   // model is a Model instance
 });
@@ -73,8 +74,9 @@ resource.get(id).then((model) => {
 ### Model relations
 
 Some concrete Models implement methods that return a Resource. When a Model
-returns a Resource this way, that resource is configured to act on objects
-that are *related to that model*. 
+returns a Resource this way, that resource acts on objects that are
+*related to that model*. 
+
 
 `Product`
 
