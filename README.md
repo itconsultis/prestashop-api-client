@@ -122,7 +122,7 @@ product.combinations().list()
 `cache`
 
     An [LRU cache instance](https://www.npmjs.com/package/lru-cache), or an
-    object that duck-types an LRU cache.
+    object that duck-types an LRU cache. Caching is disabled by default.
 
 `logger`
 
