@@ -29,7 +29,9 @@
         <position_in_category notFilterable="true">
             <![CDATA[0]]>
         </position_in_category>
-        <manufacturer_name notFilterable="true"></manufacturer_name>
+        <manufacturer_name notFilterable="true">
+            <![CDATA[product-8-manufacturer-name]]>
+        </manufacturer_name>
         <quantity notFilterable="true">
             <![CDATA[0]]>
         </quantity>

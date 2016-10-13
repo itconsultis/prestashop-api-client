@@ -107,6 +107,7 @@ parse.product.attributes = (xml, language=1) => {
       'description_short': text(shortdescs.filter(lang).pop()),
       'price': text(base.price),
       'available_for_order': text(base.available_for_order),
+      'manufacturer_name': text(base.manufacturer_name),
       'related': {
         'manufacturer': integer(text(base.id_manufacturer)),
         'combinations': combos.map(combo => integer(text(combo.id))),
