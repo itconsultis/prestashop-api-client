@@ -119,11 +119,6 @@ product.combinations().list()
     host      your PrestaShop host
     root      the api root path; defaults to "/api"
 
-`cache`
-
-    An [LRU cache instance](https://www.npmjs.com/package/lru-cache), or an
-    object that duck-types an LRU cache. Caching is disabled by default.
-
 `logger`
 
     A logger instance. Defaults to dummy logger that doesn't log anything.

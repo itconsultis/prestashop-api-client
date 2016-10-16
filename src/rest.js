@@ -6,7 +6,6 @@ import { parse } from './xml';
 import { empty, tuples, coerce } from './lang';
 import models from './models';
 import sort from './sort';
-import lru from './lru';
 import string from './string';
 import fetch from 'node-fetch';
 
@@ -50,10 +49,6 @@ export const Client = class {
         root: '/api',
       },
 
-      // LRUCache instance; see https://www.npmjs.com/package/lru-cache
-      // disable caching by default
-      cache: lru.dummy(),
-
       // logger
       logger: dummylogger,
 
@@ -72,7 +67,6 @@ export const Client = class {
   constructor (options={}) {
     this.options = merge(this.defaults(), options);
     this.fetch = this.options.fetch.algo;
-    this.cache = this.options.cache;
     this.logger = this.options.logger;
     this.funnel = {};
   }
@@ -121,24 +115,20 @@ export const Client = class {
   get (uri, options={}) {
     let url = this.url(uri, options.query);
     let key = `${this.options.language}:GET:${url}`;
-    let response = this.cache.get(key);
     let funnel = this.funnel;
 
-    if (response) {
-      return P.resolve(response);
-    }
-
-    // multiple requests on the same key converge on a single promise
+    // concurrent requests on the same url converge on a single promise
     if (funnel[key]) {
       return funnel[key];
     }
 
     let fopts = this.createFetchOptions({...options.fetch, method: 'GET'});
 
-    funnel[key] = this.fetch(url, fopts).then((response) => {
+    funnel[key] = this.fetch(url, fopts)
+
+    .then((response) => {
       delete funnel[key];
       this.validateResponse(response);
-      this.cache.set(key, response);
       return response;
     })
 
