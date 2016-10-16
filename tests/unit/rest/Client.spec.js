@@ -104,43 +104,6 @@ describe('rest.Client', () => {
       .catch(pass);
     });
 
-    it('caches responses', () => {
-      let text = P.resolve(fixture('products.xml'));
-      let response = {ok: true, clone: () => response, text: stub().returns(text)};
-      let fetch = stub().returns(P.resolve(response));
-      let cache = {get: stub(), set: stub()};
-
-      let client = new Client({
-        language: 'en',
-        server: {scheme: 'https', host: 'api.local:3000', root: '/api'},
-        fetch: {algo: fetch},
-        cache: cache,
-      });
-
-      cache.get.onCall(0).returns(null);
-      cache.get.onCall(1).returns(response);
-
-      fetch.withArgs(match.string, match.object).returns(P.resolve(response));
-
-      return client.get('/foo/bar')
-
-      .then((res) => {
-        expect(res).to.equal(response);
-        expect(fetch.calledOnce).to.be.ok;
-        expect(cache.get.calledOnce).to.be.ok;
-        expect(cache.set.calledOnce).to.be.ok;
-
-        return client.get('/foo/bar'); 
-      })
-
-      .then((res) => {
-        expect(res).to.equal(response);
-        expect(fetch.calledOnce).to.be.ok;
-        expect(cache.get.calledTwice).to.be.ok;
-        expect(cache.set.calledOnce).to.be.ok;
-      })
-    });
-
     xit('concurrent requests on the same URL converge on a single promise', () => {
       let promise = P.resolve();
       let fetch = stub().returns(promise);
